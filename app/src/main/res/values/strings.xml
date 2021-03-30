@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Designhubz Android Example</string>
+
+    <string name="filter">Filter</string>
+    <string name="black">Black</string>
+    <string name="red">Red</string>
+    <string name="blue">Blue</string>
+    <string name="add_to_bag">Add to bag</string>
+</resources>
