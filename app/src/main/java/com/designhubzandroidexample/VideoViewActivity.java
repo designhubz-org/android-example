@@ -34,7 +34,7 @@ import static com.designhubzandroidexample.helper.Constant.mProduct;
 /**
  * The type Video view activity.
  */
-public abstract class VideoViewActivity extends AppCompatActivity implements WebviewListener {
+public class VideoViewActivity extends AppCompatActivity implements WebviewListener {
 
     private DesignhubzWebview designhubzVar;
     private TextView tvDesc, tvBlack, tvRed, tvBlue;
@@ -204,6 +204,21 @@ public abstract class VideoViewActivity extends AppCompatActivity implements Web
     }
 
     @Override
+    public void onPageStarted(String s, Bitmap bitmap) {
+
+    }
+
+    @Override
+    public void onPageFinished(String s) {
+
+    }
+
+    @Override
+    public void onPageError(int i, String s, String s1) {
+
+    }
+
+    @Override
     public void onReceiveResult(String result) {
         AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
         builder.setTitle("DesignHubzSDK")
@@ -214,6 +229,31 @@ public abstract class VideoViewActivity extends AppCompatActivity implements Web
                 });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    @Override
+    public void initializeCamera() {
+
+    }
+
+    @Override
+    public void detectingFace() {
+
+    }
+
+    @Override
+    public void initializingFacePoints() {
+
+    }
+
+    @Override
+    public void initializingProductPoints() {
+
+    }
+
+    @Override
+    public void preparingFinalResult() {
+
     }
 
     /**
