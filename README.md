@@ -142,53 +142,6 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
         AlertDialog alert = builder.create();
         alert.show(); 
     }
-    
-    // Notify the host application that camera is initializing
-    @Override
-    public void initializeCamera() {
-        Snackbar.make(flRoot, "Camera initializing", Snackbar.LENGTH_LONG).show();
-    }
-
-    // Notify the host application that camera is detecting face
-    @Override
-    public void detectingFace() {
-        Snackbar.make(flRoot, "Detecting your face", Snackbar.LENGTH_LONG).show();
-    }
-
-    // Notify the host application that initializing face points
-    @Override
-    public void intializingFacePoints() {
-        Snackbar.make(flRoot, "Initializing face points", Snackbar.LENGTH_LONG).show();
-    }
-
-    // Notify the host application that initializing product points
-    @Override
-    public void initiazingProductPoints() {
-        Snackbar.make(flRoot, "Initializing product points", Snackbar.LENGTH_LONG).show();
-    }
-
-    // Notify the host application that result is ready
-    @Override
-    public void preparingFinalResult() {
-        Snackbar.make(flRoot, "Preparing final result", Snackbar.LENGTH_LONG).show();
-    }
-
-    // Notify the host application that a page has started loading.
-    @Override
-    public void onPageStarted(String url, Bitmap favicon) {
-
-    }
-
-    // Notify the host application that a page has finished loading.
-    @Override
-    public void onPageFinished(String url) {
-    }
-
-    // Report web resource loading error to the host application.
-    @Override
-    public void onPageError(int errorCode, String description, String failingUrl) {
-
-    }
         
 }
 ```

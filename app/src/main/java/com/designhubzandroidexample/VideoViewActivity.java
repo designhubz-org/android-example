@@ -34,7 +34,7 @@ import static com.designhubzandroidexample.helper.Constant.mProduct;
 /**
  * The type Video view activity.
  */
-public class VideoViewActivity extends AppCompatActivity implements WebviewListener {
+public abstract class VideoViewActivity extends AppCompatActivity implements WebviewListener {
 
     private DesignhubzWebview designhubzVar;
     private TextView tvDesc, tvBlack, tvRed, tvBlue;
@@ -214,45 +214,6 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
                 });
         AlertDialog alert = builder.create();
         alert.show();
-    }
-
-    @Override
-    public void initializeCamera() {
-        Snackbar.make(flRoot, "Camera initializing", Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void detectingFace() {
-        Snackbar.make(flRoot, "Detecting your face", Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void initializingFacePoints() {
-        Snackbar.make(flRoot, "Initializing face points", Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void initializingProductPoints() {
-        Snackbar.make(flRoot, "Initializing product points", Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void preparingFinalResult() {
-        Snackbar.make(flRoot, "Preparing final result", Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onPageStarted(String url, Bitmap favicon) {
-    }
-
-    @Override
-    public void onPageFinished(String url) {
-
-    }
-
-    @Override
-    public void onPageError(int errorCode, String description, String failingUrl) {
-
     }
 
     /**
