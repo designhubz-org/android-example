@@ -157,17 +157,3 @@ DesignhubzWebview.loadCamera(this);
 ```java
 designhubzVar.startCamera();
 ```
-
-- For get product:
-
-```java
-designhubzVar.getProduct();
-```
-
-## Contributing
-
-All contributions are welcome! If you wish to contribute, please create an issue first so that your feature, problem or question can be discussed.
-
-## License
-
-This project is licensed under the terms of the [MIT License](https://opensource.org/licenses/MIT).
