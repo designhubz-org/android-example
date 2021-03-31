@@ -1,7 +1,6 @@
 ## designhubz Android Example
 [![Platform](https://img.shields.io/badge/platform-android-green.svg)](http://developer.android.com/index.html)
 [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=7)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat)](http://opensource.org/licenses/MIT)
 
 Designhubz Android Example is written in Java for interact with the 3D/AR widgets via Designhubz Android library.
 
@@ -35,7 +34,7 @@ Designhubz Android Example is written in Java for interact with the 3D/AR widget
     }
  }
 ```
-- In your app’s build.gradle add this dependency:
+- In your appâ€™s build.gradle add this dependency:
 
 ```gradle
 dependencies{
