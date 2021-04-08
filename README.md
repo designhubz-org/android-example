@@ -128,25 +128,11 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
             }
         }
     }
-
-    // Handle result return from camera actions
-    @Override
-    public void onReceiveResult(String action) {  
-        AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
-        builder.setTitle("DesignhubzSDK")
-                .setMessage(""+result)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show(); 
-    }
         
 }
 ```
 
-- For webview camera:
+- For initialise webview camera:
 
 ```java
 DesignhubzWebview.loadCamera(this);
@@ -154,15 +140,27 @@ DesignhubzWebview.loadCamera(this);
 
 
 - For start camera:
+  - Add OnAndroidResult listner for receive response.
 
 ```java
-designhubzVar.startCamera();
+designhubzVar.startCamera(new OnAndroidResult() {
+            @Override
+            public void onAndroidReceiveResponse(String result) {
+                //Perform operation as you wish
+            }
+        });
 ```
 
 - For get product:
+  * Add OnAndroidResult listner for receive response.
 
 ```java
-designhubzVar.getProduct();
+designhubzVar.getProduct(new OnAndroidResult() {
+            @Override
+            public void onAndroidReceiveResponse(String result) {
+                //Perform operation as you wish
+            }
+        });
 ```
 
 ## Contributing

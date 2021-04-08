@@ -1,5 +1,6 @@
 package com.designhubzandroidexample;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.SnapHelper;
 import com.designhubz.androidsdk.DesignhubzWebview;
 import com.designhubz.androidsdk.Permissions;
 import com.designhubz.androidsdk.helper.Product;
+import com.designhubz.androidsdk.interfaces.OnAndroidResult;
 import com.designhubz.androidsdk.interfaces.WebviewListener;
 import com.designhubzandroidexample.adapter.VideoviewProductListAdapter;
 import com.google.android.material.snackbar.Snackbar;
@@ -218,18 +220,18 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
 
     }
 
-    @Override
-    public void onReceiveResult(String result) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
-        builder.setTitle("DesignHubzSDK")
-                .setMessage(""+result)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
+//    @Override
+//    public void onReceiveResult(String result) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
+//        builder.setTitle("DesignHubzSDK")
+//                .setMessage(""+result)
+//                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                    }
+//                });
+//        AlertDialog alert = builder.create();
+//        alert.show();
+//    }
 
     @Override
     public void initializeCamera() {
@@ -262,7 +264,20 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
      * @param view the view
      */
     public void StartCamera(View view) {
-        designhubzVar.startCamera();
+        designhubzVar.startCamera(new OnAndroidResult() {
+            @Override
+            public void onAndroidReceiveResponse(String result) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
+                builder.setTitle("DesignHubzSDK")
+                        .setMessage("" + result)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
     }
 
 
@@ -272,6 +287,23 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
      * @param view the view
      */
     public void GetProduct(View view) {
-        designhubzVar.getProduct();
+        ProgressDialog mProgressDialog = new ProgressDialog(VideoViewActivity.this);
+        mProgressDialog.setMessage("Please wait while getting product");
+        mProgressDialog.show();
+        designhubzVar.getProduct(new OnAndroidResult() {
+            @Override
+            public void onAndroidReceiveResponse(String result) {
+                mProgressDialog.dismiss();
+                AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
+                builder.setTitle("DesignHubzSDK")
+                        .setMessage("" + result)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
     }
 }
