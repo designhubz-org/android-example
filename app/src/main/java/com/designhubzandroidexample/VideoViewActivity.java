@@ -300,21 +300,6 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
      * @param view the view
      */
     public void GetProduct(View view) {
-        /*Product product = designhubzVar.getProduct(new OnAndroidResult() {
-            @Override
-            public void onAndroidReceiveResponse(String result) {
-                mProgressDialog.dismiss();
-                AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
-                builder.setTitle("DesignHubzSDK")
-                        .setMessage("" + result)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
-        });*/
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {

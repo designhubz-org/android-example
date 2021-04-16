@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
 }
 ```
 
-- For initialise webview camera:
+- For webview camera:
 
 ```java
 DesignhubzWebview.loadCamera(this);
@@ -140,26 +140,58 @@ DesignhubzWebview.loadCamera(this);
 
 
 - For start camera:
-  - Add OnAndroidResult listner for receive response.
 
 ```java
-designhubzVar.startCamera(new OnAndroidResult() {
-            @Override
-            public void onAndroidReceiveResponse(String result) {
-                //Perform operation as you wish
-            }
+ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            /*
+             * Your task will be executed here
+             * its like doInBackground()
+             * */
+            result = designhubzVar.startCamera();
+            handler.post(() -> {
+                /*
+                 * its like onPostExecute()
+                 * */
+                AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
+                builder.setTitle("DesignHubzSDK")
+                        .setMessage("" + result)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            });
         });
 ```
 
 - For get product:
-  * Add OnAndroidResult listner for receive response.
 
 ```java
-designhubzVar.getProduct(new OnAndroidResult() {
-            @Override
-            public void onAndroidReceiveResponse(String result) {
-                //Perform operation as you wish
-            }
+ ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            /*
+             * Your task will be executed here
+             * its like doInBackground()
+             * */
+            Product product = designhubzVar.getProduct();
+            handler.post(() -> {
+                /*
+                 * its like onPostExecute()
+                 * */
+                AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
+                builder.setTitle("DesignHubzSDK")
+                        .setMessage("" + new JSONHelper().convertObjecttoJson(product))
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            });
         });
 ```
 
