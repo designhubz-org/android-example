@@ -18,6 +18,10 @@ public class Communication<T> {
         this.parameters = parameters;
     }
 
+    public int getId() {
+        return id;
+    }
+
     //todo refactor
     public String toString() {
         String s =  "javascript:callDesignhubzAPI('";

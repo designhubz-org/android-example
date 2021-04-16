@@ -4,13 +4,20 @@ import android.os.Handler;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 
+import com.designhubz.androidsdk.helper.JSONHelper;
+import com.designhubz.androidsdk.helper.Product;
+import com.designhubz.androidsdk.helper.RequestQueueManager;
+import com.designhubz.androidsdk.interfaces.OnAndroidResult;
+
 
 public class JavaScriptInterface {
 
     @android.webkit.JavascriptInterface
     public static void onAndroidReceive(String result) {
         Log.i("onAndroidReceive",""+result);
-        DesignhubzWebview.mOnAndroidResult.onAndroidReceiveResponse(result);
+        Product product = (Product) new JSONHelper().convertJsontoObject(result, Product.class);
+        OnAndroidResult onAndroidResult = (OnAndroidResult) new RequestQueueManager<>().getRequest(product.result.getId());
+        onAndroidResult.onAndroidReceiveResponse(result);
     }
 
     @JavascriptInterface

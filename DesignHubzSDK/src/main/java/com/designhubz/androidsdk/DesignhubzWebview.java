@@ -3,6 +3,7 @@ package com.designhubz.androidsdk;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -18,6 +19,9 @@ import androidx.annotation.Nullable;
 import com.designhubz.androidsdk.helper.APIHelper;
 import com.designhubz.androidsdk.helper.APIObject;
 import com.designhubz.androidsdk.helper.Communication;
+import com.designhubz.androidsdk.helper.LockUI;
+import com.designhubz.androidsdk.helper.RequestQueueManager;
+import com.designhubz.androidsdk.helper.JSONHelper;
 import com.designhubz.androidsdk.helper.Product;
 import com.designhubz.androidsdk.interfaces.OnAndroidResult;
 import com.designhubz.androidsdk.interfaces.WebviewListener;
@@ -34,8 +38,9 @@ public class DesignhubzWebview<T> extends WebView {
     protected WeakReference<Activity> mActivity;
     protected static WebviewListener mListener;
     protected static WebViewClient mCustomWebViewClient;
-    protected static OnAndroidResult mOnAndroidResult;
-    public static String mCameraFacing="user";
+    public static String mCameraFacing = "user";
+    private Context mContext;
+    private ProgressDialog pDialog;
 
     /**
      * Instantiates a new webview.
@@ -44,6 +49,7 @@ public class DesignhubzWebview<T> extends WebView {
      */
     public DesignhubzWebview(Context context) {
         super(context);
+        mContext = context;
         webView = this;
     }
 
@@ -55,6 +61,7 @@ public class DesignhubzWebview<T> extends WebView {
      */
     public DesignhubzWebview(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
         webView = this;
     }
 
@@ -67,8 +74,7 @@ public class DesignhubzWebview<T> extends WebView {
     public void setListener(final Activity activity, final WebviewListener listener) {
         if (activity != null) {
             mActivity = new WeakReference<Activity>(activity);
-        }
-        else {
+        } else {
             mActivity = null;
         }
 
@@ -78,7 +84,7 @@ public class DesignhubzWebview<T> extends WebView {
     /**
      * Sets listener.
      *
-     * @param listener              the listener
+     * @param listener the listener
      */
     protected void setListener(final WebviewListener listener) {
         mListener = listener;
@@ -99,7 +105,7 @@ public class DesignhubzWebview<T> extends WebView {
         this.getSettings().setJavaScriptEnabled(true);
         this.getSettings().setUseWideViewPort(true);
         super.addJavascriptInterface(new JavaScriptInterface(), "Android");
-        super.setWebViewClient(new WebviewClient(){
+        super.setWebViewClient(new WebviewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
                 if (!hasError()) {
@@ -112,6 +118,9 @@ public class DesignhubzWebview<T> extends WebView {
                 }
             }
         });
+        pDialog = new ProgressDialog(mContext);
+        pDialog.setMessage("Please wait...");
+        pDialog.setCancelable(false);
     }
 
     /**
@@ -124,13 +133,13 @@ public class DesignhubzWebview<T> extends WebView {
             @Override
             public void onPermissionRequest(final PermissionRequest request) {
                 Log.d("TAG", "onPermissionRequest");
-                ((Activity)activity).runOnUiThread(new Runnable() {
+                ((Activity) activity).runOnUiThread(new Runnable() {
                     @TargetApi(Build.VERSION_CODES.M)
                     @Override
                     public void run() {
                         Log.d("TAG", request.getOrigin().toString());
                         if (request.getOrigin().toString().equals("file:///")
-                        ||request.getOrigin().toString().startsWith("https://")) {
+                                || request.getOrigin().toString().startsWith("https://")) {
                             Log.d("TAG", "GRANTED");
                             request.grant(request.getResources());
                         } else {
@@ -142,24 +151,99 @@ public class DesignhubzWebview<T> extends WebView {
             }
 
         });
-        if (!Permissions.checkPermission(((Activity)activity))) {
+        if (!Permissions.checkPermission(((Activity) activity))) {
             Permissions.requestPermission(((Activity) activity));
-        }else {
-            Log.i("BuildConfig.WEB_URL",""+BuildConfig.WEB_URL);
-            webView.loadUrl(""+BuildConfig.WEB_URL);
+        } else {
+            Log.i("BuildConfig.WEB_URL", "" + BuildConfig.WEB_URL);
+            webView.loadUrl("" + BuildConfig.WEB_URL);
         }
     }
 
-    public void startCamera(OnAndroidResult onAndroidResult){
-        mOnAndroidResult = onAndroidResult;
-        callDesignhubzWebAPI(new Communication(APIHelper.getApiObjectValue(APIObject.VIDEO),0,"startVideo",null));
+    String Res = "";
+
+    public synchronized String startCamera() {
+        Res = "";
+        ((Activity) mContext).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (pDialog.isShowing()) {
+                    pDialog.dismiss();
+                }
+                pDialog.show();
+            }
+        });
+        LockUI lockUI = new LockUI();
+
+        OnAndroidResult mOnAndroidResult = action -> {
+            Log.e("RES", "" + action);
+            pDialog.dismiss();
+            Res = action;
+            lockUI.Release();
+        };
+
+        callDesignhubzWebAPI(new Communication<>(APIHelper.getApiObjectValue(APIObject.VIDEO), new RequestQueueManager<>().generateRequestID(), "startVideo", null), mOnAndroidResult);
+        lockUI.Lock();
+        Log.e("RES", "AFTER" + Res);
+        return Res;
     }
 
-    public void getProduct(OnAndroidResult onAndroidResult){
-        mOnAndroidResult = onAndroidResult;
+    String prodResponse = "";
+
+    public synchronized Product getProduct() {
+        prodResponse = "";
+        ((Activity) mContext).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (pDialog.isShowing()) {
+                    pDialog.dismiss();
+                }
+                pDialog.show();
+            }
+        });
+
+        LockUI lockUI = new LockUI();
+
         Integer[] params = new Integer[1];
         params[0] = 1;
-        callDesignhubzWebAPI(new Communication(APIHelper.getApiObjectValue(APIObject.PRODUCT),9999,"getProduct",params));
+
+        OnAndroidResult mOnAndroidResult = action -> {
+            Log.e("RES", "" + action);
+            prodResponse = action;
+            lockUI.Release();
+            pDialog.dismiss();
+        };
+
+        callDesignhubzWebAPI(new Communication(APIHelper.getApiObjectValue(APIObject.PRODUCT), new RequestQueueManager<>().generateRequestID(), "getProduct", params), mOnAndroidResult);
+
+        lockUI.Lock();
+        Log.e("RES", "AFTER" + prodResponse);
+
+        return (Product) new JSONHelper().convertJsontoObject(prodResponse, Product.class);
+    }
+
+    /**
+     * Added by Nicolas/JP
+     *
+     * @param comObj
+     * @param onAndroidResult
+     */
+    //TODO Refactor
+    public void callDesignhubzWebAPI(Communication<T> comObj, OnAndroidResult onAndroidResult) {
+        //Add request to queue will callback
+        new RequestQueueManager<>().addRquest(comObj.getId(), onAndroidResult);
+
+        ((Activity) mContext).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                webView.evaluateJavascript(comObj.toString(), new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String result) {
+                        Log.i("LOGTAG", "result:-" + result);
+                    }
+                });
+            }
+        });
+
     }
 
     /**
@@ -176,24 +260,19 @@ public class DesignhubzWebview<T> extends WebView {
      *
      * @param mColor the HASH color code
      */
-    public static void changeColor(String mColor){
-        webView.evaluateJavascript("javascript:changeColor("+mColor+");", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String result) {
-                Log.i("LOGTAG", "result:-" + result);
-            }
-        });
+    public static void changeColor(String mColor) {
+        webView.evaluateJavascript("javascript:changeColor(" + mColor + ");", result -> Log.i("LOGTAG", "result:-" + result));
     }
 
     /**
      * Switch camera.
      */
-    public static void switchCamera(){
-        if(mCameraFacing.equalsIgnoreCase("environment"))
-            mCameraFacing="user";
+    public static void switchCamera() {
+        if (mCameraFacing.equalsIgnoreCase("environment"))
+            mCameraFacing = "user";
         else
-            mCameraFacing="environment";
-        webView.evaluateJavascript("javascript:switchCamera("+mCameraFacing+");", new ValueCallback<String>() {
+            mCameraFacing = "environment";
+        webView.evaluateJavascript("javascript:switchCamera(" + mCameraFacing + ");", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String result) {
                 Log.i("LOGTAG", "result:-" + result);
@@ -201,18 +280,4 @@ public class DesignhubzWebview<T> extends WebView {
         });
     }
 
-    /**
-     * Added by Nicolas/JP
-     *
-     * @param comObj
-     */
-    //TODO Refactor
-    public void callDesignhubzWebAPI(Communication<T> comObj) {
-        webView.evaluateJavascript(comObj.toString(), new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String result) {
-                Log.i("LOGTAG", "result:-" + result);
-            }
-        });
-    }
 }

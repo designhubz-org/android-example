@@ -1,10 +1,13 @@
 package com.designhubzandroidexample;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -21,14 +24,15 @@ import androidx.recyclerview.widget.SnapHelper;
 
 import com.designhubz.androidsdk.DesignhubzWebview;
 import com.designhubz.androidsdk.Permissions;
+import com.designhubz.androidsdk.helper.JSONHelper;
 import com.designhubz.androidsdk.helper.Product;
-import com.designhubz.androidsdk.interfaces.OnAndroidResult;
 import com.designhubz.androidsdk.interfaces.WebviewListener;
 import com.designhubzandroidexample.adapter.VideoviewProductListAdapter;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static com.designhubz.androidsdk.helper.RequestCodes.REQUEST_CODE_PERMISSION;
 import static com.designhubzandroidexample.helper.Constant.mProduct;
@@ -263,23 +267,32 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
      *
      * @param view the view
      */
+    String result = "";
     public void StartCamera(View view) {
-        designhubzVar.startCamera(new OnAndroidResult() {
-            @Override
-            public void onAndroidReceiveResponse(String result) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            /*
+             * Your task will be executed here
+             * its like doInBackground()
+             * */
+            result = designhubzVar.startCamera();
+            handler.post(() -> {
+                /*
+                 * its like onPostExecute()
+                 * */
                 AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
                 builder.setTitle("DesignHubzSDK")
-                        .setMessage("" + result)
+                        .setMessage("StartCamera>>>>" + result)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                             }
                         });
                 AlertDialog alert = builder.create();
                 alert.show();
-            }
+            });
         });
     }
-
 
     /**
      * Get product.
@@ -287,10 +300,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
      * @param view the view
      */
     public void GetProduct(View view) {
-        ProgressDialog mProgressDialog = new ProgressDialog(VideoViewActivity.this);
-        mProgressDialog.setMessage("Please wait while getting product");
-        mProgressDialog.show();
-        designhubzVar.getProduct(new OnAndroidResult() {
+        /*Product product = designhubzVar.getProduct(new OnAndroidResult() {
             @Override
             public void onAndroidReceiveResponse(String result) {
                 mProgressDialog.dismiss();
@@ -304,6 +314,29 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
                 AlertDialog alert = builder.create();
                 alert.show();
             }
+        });*/
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            /*
+             * Your task will be executed here
+             * its like doInBackground()
+             * */
+            Product product = designhubzVar.getProduct();
+            handler.post(() -> {
+                /*
+                 * its like onPostExecute()
+                 * */
+                AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
+                builder.setTitle("DesignHubzSDK")
+                        .setMessage("GetProduct>>>>>" + new JSONHelper().convertObjecttoJson(product))
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            });
         });
     }
 }

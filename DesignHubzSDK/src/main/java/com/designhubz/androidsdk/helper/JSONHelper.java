@@ -27,11 +27,11 @@ public class JSONHelper<T> {
      * Convert json to object product.
      *
      * @param jsonString the json string
+     * @param clazz
      * @return the product
      */
-    public Product convertJsontoObject(String jsonString){
+    public T convertJsontoObject(String jsonString, Class<T> clazz){
         Gson g = new Gson();
-        Type type = new TypeToken<T>(){}.getType();
-        return g.fromJson(jsonString, type);
+        return g.fromJson(jsonString, clazz);
     }
 }

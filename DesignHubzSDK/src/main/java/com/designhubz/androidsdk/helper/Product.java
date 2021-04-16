@@ -6,6 +6,7 @@ public class Product {
     String desc;
     int price;
     int orgPrice;
+    public Result result;
 
     public Product(Double id, String name, String desc, int price, int orgPrice) {
         this.id = id;
@@ -33,5 +34,31 @@ public class Product {
 
     public int getOrgPrice() {
         return orgPrice;
+    }
+
+    public class ApiObject{
+        public int id;
+        public String value;
+
+        public int getId() {
+            return id;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
+    public class Result{
+        public int id;
+        public ApiObject apiObject;
+
+        public int getId() {
+            return id;
+        }
+
+        public ApiObject getApiObject() {
+            return apiObject;
+        }
     }
 }
