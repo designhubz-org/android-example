@@ -9,14 +9,16 @@ import com.designhubz.androidsdk.helper.Product;
 import com.designhubz.androidsdk.helper.RequestQueueManager;
 import com.designhubz.androidsdk.interfaces.OnAndroidResult;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class JavaScriptInterface {
 
     @android.webkit.JavascriptInterface
     public static void onAndroidReceive(String result) {
-        Log.i("onAndroidReceive",""+result);
-        Product product = (Product) new JSONHelper().convertJsontoObject(result, Product.class);
-        OnAndroidResult onAndroidResult = (OnAndroidResult) new RequestQueueManager<>().getRequest(product.result.getId());
+        Log.i("onAndroidReceive", "" + result);
+        OnAndroidResult onAndroidResult = (OnAndroidResult) new RequestQueueManager<>().getRequest(new JSONHelper<>().getRequestid(result));
         onAndroidResult.onAndroidReceiveResponse(result);
     }
 
@@ -29,8 +31,9 @@ public class JavaScriptInterface {
             public void run() {
                 JavaScriptInterface.detectingFace();
             }
-        },2500);
+        }, 2500);
     }
+
     @JavascriptInterface
     public static void detectingFace() {
         DesignhubzWebview.mListener.detectingFace();
@@ -40,8 +43,9 @@ public class JavaScriptInterface {
             public void run() {
                 JavaScriptInterface.initializingFacePoints();
             }
-        },2500);
+        }, 2500);
     }
+
     @JavascriptInterface
     public static void initializingFacePoints() {
         DesignhubzWebview.mListener.initializingFacePoints();
@@ -51,8 +55,9 @@ public class JavaScriptInterface {
             public void run() {
                 JavaScriptInterface.initializingProductPoints();
             }
-        },2500);
+        }, 2500);
     }
+
     @JavascriptInterface
     public static void initializingProductPoints() {
         DesignhubzWebview.mListener.initializingProductPoints();
@@ -62,8 +67,9 @@ public class JavaScriptInterface {
             public void run() {
                 JavaScriptInterface.preparingFinalResult();
             }
-        },2500);
+        }, 2500);
     }
+
     @JavascriptInterface
     public static void preparingFinalResult() {
         DesignhubzWebview.mListener.preparingFinalResult();

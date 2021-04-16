@@ -3,6 +3,8 @@ package com.designhubz.androidsdk.helper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONObject;
+
 import java.lang.reflect.Type;
 
 /**
@@ -33,5 +35,10 @@ public class JSONHelper<T> {
     public T convertJsontoObject(String jsonString, Class<T> clazz){
         Gson g = new Gson();
         return g.fromJson(jsonString, clazz);
+    }
+
+    public int getRequestid(String jsonString){
+        RequestResponse requestResponse = (RequestResponse) new JSONHelper().convertJsontoObject(jsonString, RequestResponse.class);
+        return requestResponse.result.getId();
     }
 }
