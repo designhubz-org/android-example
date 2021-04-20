@@ -1,5 +1,13 @@
 package com.designhubz.androidsdk.helper;
 
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * The type Communication.
+ *
+ * @param <T> the type parameter
+ */
 public class Communication<T> {
     // 0 -> product
     // 1 -> video
@@ -10,26 +18,75 @@ public class Communication<T> {
     String property;
     // Parameters of function
     T[] parameters;
+    // request queue map
+    public static Map<Integer, Object> mRequestsMap = new HashMap<Integer, Object>();
 
-    public Communication(int apiObject, int id, String property, T[] parameters) {
+    /**
+     * Instantiates a new Communication.
+     *
+     * @param apiObject  the api object
+     * @param property   the property
+     * @param parameters the parameters
+     */
+    public Communication(int apiObject, String property, T[] parameters) {
         this.apiObject = apiObject;
-        this.id = id;
+        this.id = generateRequestID();
         this.property = property;
         this.parameters = parameters;
     }
 
+    public Communication() {
+    }
+
+    /**
+     * Generate request id int.
+     *
+     * @return the int
+     */
+    public int generateRequestID() {
+        return (int) Math.floor(Math.random() * 65536);
+    }
+
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
     public int getId() {
         return id;
     }
 
-    //todo refactor
-    public String toString() {
-        String s =  "javascript:callDesignhubzAPI('";
+    /**
+     * Create msg string.
+     *
+     * @param callback the callback
+     * @return the string
+     */
+    public String createMsg(T callback) {
+        String s = "javascript:callDesignhubzAPI('";
 
         //Converting the communication object to Json + String
         s += new JSONHelper().convertObjecttoJson(this);
         s += "');";
+        mRequestsMap.put(id, callback);
         return s;
+    }
+
+    /**
+     * ProcessMsg.
+     *
+     * @param id the id
+     * @return the callback
+     */
+    public Object processMsg(int id) {
+        if (mRequestsMap.containsKey(id)) {
+            System.out.println("Initial Mappings are: " + mRequestsMap);
+            Object mCallback = mRequestsMap.get(id);
+            mRequestsMap.remove(id);
+            System.out.println("New map is: " + mRequestsMap);
+            return mCallback;
+        } else
+            return null;
     }
 }
 

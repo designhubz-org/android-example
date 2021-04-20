@@ -70,7 +70,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
 
         designhubzVar.setListener(this, this);
 
-        designhubzVar.loadCamera(this);
+        designhubzVar.initializeComponents(this);
 
         rcvProduct.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
@@ -110,7 +110,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_PERMISSION) {
             if (Permissions.checkPermission(this)) {
-                DesignhubzWebview.loadCamera(this);
+                DesignhubzWebview.initializeComponents(this);
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
                 builder.setTitle("Permission Denied")

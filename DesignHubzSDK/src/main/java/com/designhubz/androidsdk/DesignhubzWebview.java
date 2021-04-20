@@ -20,7 +20,6 @@ import com.designhubz.androidsdk.helper.APIHelper;
 import com.designhubz.androidsdk.helper.APIObject;
 import com.designhubz.androidsdk.helper.Communication;
 import com.designhubz.androidsdk.helper.LockUI;
-import com.designhubz.androidsdk.helper.RequestQueueManager;
 import com.designhubz.androidsdk.helper.JSONHelper;
 import com.designhubz.androidsdk.helper.Product;
 import com.designhubz.androidsdk.interfaces.OnAndroidResult;
@@ -124,11 +123,11 @@ public class DesignhubzWebview<T> extends WebView {
     }
 
     /**
-     * For load Camera
+     * For initialize Components
      *
      * @param activity the context pass from sample app side
      */
-    public static void loadCamera(Context activity) {
+    public static void initializeComponents(Context activity) {
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onPermissionRequest(final PermissionRequest request) {
@@ -181,7 +180,7 @@ public class DesignhubzWebview<T> extends WebView {
             lockUI.Release();
         };
 
-        callDesignhubzWebAPI(new Communication<>(APIHelper.getApiObjectValue(APIObject.VIDEO), new RequestQueueManager<>().generateRequestID(), "startVideo", null), mOnAndroidResult);
+        callDesignhubzWebAPI(new Communication<>(APIHelper.getApiObjectValue(APIObject.VIDEO),"startVideo", null), mOnAndroidResult);
         lockUI.Lock();
         Log.e("RES", "AFTER" + Res);
         return Res;
@@ -213,7 +212,7 @@ public class DesignhubzWebview<T> extends WebView {
             pDialog.dismiss();
         };
 
-        callDesignhubzWebAPI(new Communication(APIHelper.getApiObjectValue(APIObject.PRODUCT), new RequestQueueManager<>().generateRequestID(), "getProduct", params), mOnAndroidResult);
+        callDesignhubzWebAPI(new Communication(APIHelper.getApiObjectValue(APIObject.PRODUCT),"getProduct", params), mOnAndroidResult);
 
         lockUI.Lock();
         Log.e("RES", "AFTER" + prodResponse);
@@ -229,13 +228,10 @@ public class DesignhubzWebview<T> extends WebView {
      */
     //TODO Refactor
     public void callDesignhubzWebAPI(Communication<T> comObj, OnAndroidResult onAndroidResult) {
-        //Add request to queue will callback
-        new RequestQueueManager<>().addRquest(comObj.getId(), onAndroidResult);
-
         ((Activity) mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                webView.evaluateJavascript(comObj.toString(), new ValueCallback<String>() {
+                webView.evaluateJavascript(comObj.createMsg((T) onAndroidResult), new ValueCallback<String>() {
                     @Override
                     public void onReceiveValue(String result) {
                         Log.i("LOGTAG", "result:-" + result);
@@ -243,7 +239,6 @@ public class DesignhubzWebview<T> extends WebView {
                 });
             }
         });
-
     }
 
     /**

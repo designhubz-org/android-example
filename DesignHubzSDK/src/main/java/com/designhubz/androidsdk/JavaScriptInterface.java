@@ -4,13 +4,9 @@ import android.os.Handler;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 
+import com.designhubz.androidsdk.helper.Communication;
 import com.designhubz.androidsdk.helper.JSONHelper;
-import com.designhubz.androidsdk.helper.Product;
-import com.designhubz.androidsdk.helper.RequestQueueManager;
 import com.designhubz.androidsdk.interfaces.OnAndroidResult;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 
 public class JavaScriptInterface {
@@ -18,7 +14,7 @@ public class JavaScriptInterface {
     @android.webkit.JavascriptInterface
     public static void onAndroidReceive(String result) {
         Log.i("onAndroidReceive", "" + result);
-        OnAndroidResult onAndroidResult = (OnAndroidResult) new RequestQueueManager<>().getRequest(new JSONHelper<>().getRequestid(result));
+        OnAndroidResult onAndroidResult = (OnAndroidResult) new Communication<>().processMsg(new JSONHelper<>().getRequestid(result));
         onAndroidResult.onAndroidReceiveResponse(result);
     }
 

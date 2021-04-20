@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
         //Register webview client listener here
         designhubzVar.setListener(this,this);
 
-        DesignhubzWebview.loadCamera(this);
+        DesignhubzWebview.initializeComponents(this);
     }
 
     /**
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 50) {
             if (Permissions.checkPermission(this)) {
-                DesignhubzWebview.loadCamera(this);
+                DesignhubzWebview.initializeComponents(this);
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
                 builder.setTitle("Permission Denied")
@@ -132,10 +132,10 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
 }
 ```
 
-- For webview camera:
+- For Initialize Components:
 
 ```java
-DesignhubzWebview.loadCamera(this);
+DesignhubzWebview.initializeComponents(this);
 ```
 
 
