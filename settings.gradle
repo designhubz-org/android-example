@@ -1,3 +1,2 @@
-include ':DesignHubzSDK'
 include ':app'
 rootProject.name = "DesignhubzAndroidExample"
