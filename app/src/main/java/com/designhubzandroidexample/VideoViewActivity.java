@@ -26,6 +26,7 @@ import com.designhubz.androidsdk.DesignhubzWebview;
 import com.designhubz.androidsdk.Permissions;
 import com.designhubz.androidsdk.helper.JSONHelper;
 import com.designhubz.androidsdk.api.Product;
+import com.designhubz.androidsdk.interfaces.OnReceiveProduct;
 import com.designhubz.androidsdk.interfaces.WebviewListener;
 import com.designhubzandroidexample.adapter.VideoviewProductListAdapter;
 
@@ -300,28 +301,23 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
      * @param view the view
      */
     public void GetProduct(View view) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-        executor.execute(() -> {
-            /*
-             * Your task will be executed here
-             * its like doInBackground()
-             * */
-            Product product = designhubzVar.getProduct();
-            handler.post(() -> {
-                /*
-                 * its like onPostExecute()
-                 * */
+        designhubzVar.getProduct(new OnReceiveProduct() {
+
+            @Override
+            public void onProductReceived(Product product) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
                 builder.setTitle("DesignHubzSDK")
-                        .setMessage("GetProduct>>>>>" + new JSONHelper().convertObjecttoJson(product))
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            });
+                    .setMessage("GetProduct>>>>>" + JSONHelper.convertToJson(product))
+                    .setPositiveButton("OK", (dialog, id) -> {
+                    })
+                    .create()
+                    .show();
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+
+            }
         });
     }
 }
