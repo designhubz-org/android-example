@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-import com.designhubz.androidsdk.helper.Product;
+import com.designhubz.androidsdk.api.Product;
 import com.designhubzandroidexample.R;
 
 import java.util.List;

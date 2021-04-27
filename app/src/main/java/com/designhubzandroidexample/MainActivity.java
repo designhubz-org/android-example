@@ -8,7 +8,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.designhubz.androidsdk.helper.Product;
+import com.designhubz.androidsdk.api.Product;
 import com.designhubzandroidexample.adapter.ProductListAdapter;
 import com.designhubzandroidexample.helper.Constant;
 

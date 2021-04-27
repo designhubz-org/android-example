@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.SnapHelper;
 import com.designhubz.androidsdk.DesignhubzWebview;
 import com.designhubz.androidsdk.Permissions;
 import com.designhubz.androidsdk.helper.JSONHelper;
-import com.designhubz.androidsdk.helper.Product;
+import com.designhubz.androidsdk.api.Product;
 import com.designhubz.androidsdk.interfaces.WebviewListener;
 import com.designhubzandroidexample.adapter.VideoviewProductListAdapter;
 
