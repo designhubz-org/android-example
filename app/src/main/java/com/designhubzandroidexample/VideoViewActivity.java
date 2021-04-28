@@ -2,12 +2,8 @@ package com.designhubzandroidexample;
 
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -32,11 +28,8 @@ import com.designhubzandroidexample.adapter.VideoviewProductListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static com.designhubz.androidsdk.helper.RequestCodes.REQUEST_CODE_PERMISSION;
-import static com.designhubzandroidexample.helper.Constant.mProduct;
 
 /**
  * The type Video view activity.
@@ -46,9 +39,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
     private DesignhubzWebview designhubzVar;
     private TextView tvDesc, tvBlack, tvRed, tvBlue;
     private RecyclerView rcvProduct;
-    private List<Product> videoViewProductList = new ArrayList<>();
-    private VideoviewProductListAdapter productListAdapter;
-    private FrameLayout flRoot;
+    private final List<Product> videoViewProductList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +50,6 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
     }
 
     private void main() {
-        flRoot = findViewById(R.id.flRoot);
         designhubzVar = findViewById(R.id.wvCamera);
         rcvProduct = findViewById(R.id.rcvProduct);
         tvDesc = findViewById(R.id.tvDesc);
@@ -67,9 +57,9 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
         tvRed = findViewById(R.id.tvRed);
         tvBlue = findViewById(R.id.tvBlue);
 
-        designhubzVar.initView(mProduct);
+        designhubzVar.initView();
 
-        designhubzVar.setListener(this, this);
+        designhubzVar.setListener(this);
 
         designhubzVar.initializeComponents(this);
 
@@ -88,7 +78,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
         videoViewProductList.add(new Product(1.365, "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 4300, 5000));
         videoViewProductList.add(new Product(1.365, "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 2400, 3200));
 
-        productListAdapter = new VideoviewProductListAdapter(this, videoViewProductList) {
+        VideoviewProductListAdapter productListAdapter = new VideoviewProductListAdapter(this, videoViewProductList) {
             @Override
             public void onClickItem(int adapterPosition) {
 
@@ -111,7 +101,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_PERMISSION) {
             if (Permissions.checkPermission(this)) {
-                DesignhubzWebview.initializeComponents(this);
+                designhubzVar.initializeComponents(this);
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
                 builder.setTitle("Permission Denied")
@@ -135,7 +125,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
      */
     public void onBlackClick(View view) {
         String colorCode = "#" + Integer.toHexString(ContextCompat.getColor(this, R.color.item_black));
-        DesignhubzWebview.changeColor(colorCode);
+        designhubzVar.changeColor(colorCode);
         tvBlack.setVisibility(View.VISIBLE);
         tvRed.setVisibility(View.INVISIBLE);
         tvBlue.setVisibility(View.INVISIBLE);
@@ -148,7 +138,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
      */
     public void onRedClick(View view) {
         String colorCode = "#" + Integer.toHexString(ContextCompat.getColor(this, R.color.item_red));
-        DesignhubzWebview.changeColor(colorCode);
+        designhubzVar.changeColor(colorCode);
         tvBlack.setVisibility(View.INVISIBLE);
         tvRed.setVisibility(View.VISIBLE);
         tvBlue.setVisibility(View.INVISIBLE);
@@ -161,7 +151,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
      */
     public void onBlueClick(View view) {
         String colorCode = "#" + Integer.toHexString(ContextCompat.getColor(this, R.color.item_blue));
-        DesignhubzWebview.changeColor(colorCode);
+        designhubzVar.changeColor(colorCode);
         tvBlack.setVisibility(View.INVISIBLE);
         tvRed.setVisibility(View.INVISIBLE);
         tvBlue.setVisibility(View.VISIBLE);
@@ -173,7 +163,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
      * @param view the view
      */
     public void onSwitchCamera(View view) {
-        DesignhubzWebview.switchCamera();
+        designhubzVar.switchCamera();
     }
 
     /**
@@ -225,19 +215,6 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
 
     }
 
-//    @Override
-//    public void onReceiveResult(String result) {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
-//        builder.setTitle("DesignHubzSDK")
-//                .setMessage(""+result)
-//                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                    }
-//                });
-//        AlertDialog alert = builder.create();
-//        alert.show();
-//    }
-
     @Override
     public void initializeCamera() {
 
@@ -268,30 +245,17 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
      *
      * @param view the view
      */
-    String result = "";
     public void StartCamera(View view) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-        executor.execute(() -> {
-            /*
-             * Your task will be executed here
-             * its like doInBackground()
-             * */
-            result = designhubzVar.startCamera();
-            handler.post(() -> {
-                /*
-                 * its like onPostExecute()
-                 * */
-                AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
-                builder.setTitle("DesignHubzSDK")
-                        .setMessage("StartCamera>>>>" + result)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            });
+        designhubzVar.startCamera(result -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
+            builder.setTitle("DesignHubzSDK")
+                .setMessage("StartCamera>>>>" + result)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+            AlertDialog alert = builder.create();
+            alert.show();
         });
     }
 
