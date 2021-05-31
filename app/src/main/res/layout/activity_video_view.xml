@@ -4,13 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:Eyewear="http://schemas.android.com/apk/res-auto"
     android:id="@+id/flRoot"
     tools:context=".VideoViewActivity">
 
     <com.designhubz.androidsdk.DesignhubzWebview
         android:id="@+id/wvCamera"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        Eyewear:Fit="JustRight"
+        Eyewear:Size="Medium"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -210,30 +214,52 @@
     </LinearLayout>
 
 
-    <LinearLayout
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal">
-
-        <Button
+        android:layout_gravity="bottom">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:text="Start Camera"
-            android:layout_weight="1"
-            android:onClick="StartCamera"
-            android:id="@+id/btCamera"/>
+            android:orientation="horizontal">
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:text="Get Product"
-            android:layout_weight="1"
-            android:onClick="GetProduct"
-            android:id="@+id/btgetProduct"/>
-    </LinearLayout>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="Start Eyewear"
+                android:layout_weight="1"
+                android:onClick="StartEyewear"
+                android:id="@+id/btCamera"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="Load Variation"
+                android:layout_weight="1"
+                android:onClick="LoadVariation"
+                android:id="@+id/btLoadVariation"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="Switch Context"
+                android:layout_weight="1"
+                android:onClick="switchContext"
+                android:id="@+id/btgetProduct"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="Take Screenshot"
+                android:layout_weight="1"
+                android:onClick="screenshot"
+                android:id="@+id/btScreenshot"/>
+        </LinearLayout>
+    </HorizontalScrollView>
 
 </FrameLayout>
