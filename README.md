@@ -93,10 +93,12 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
  
         designhubzVar = findViewById(R.id.wvCamera);
 
-        //Register webview client listener here
-        designhubzVar.setListener(this,this);
+        designhubzVar.initView();
 
-        DesignhubzWebview.initializeComponents(this);
+        //Register webview client listener here
+        designhubzVar.setListener(this);
+
+        designhubzVar.initializeComponents(this);
     }
 
     /**
@@ -139,60 +141,127 @@ DesignhubzWebview.initializeComponents(this);
 ```
 
 
-- For start camera:
+- For Start the eyewear try-on widget:
 
 ```java
-ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-        executor.execute(() -> {
-            /*
-             * Your task will be executed here
-             * its like doInBackground()
-             * */
-            result = designhubzVar.startCamera();
-            handler.post(() -> {
-                /*
-                 * its like onPostExecute()
-                 * */
-                AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
-                builder.setTitle("DesignHubzSDK")
-                        .setMessage("" + result)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            });
-        });
+progressDialog.show();
+designhubzVar.startEyewearTryon(new OnEyewearRequestCallback() {
+      @Override
+      public void onResult(Object action) {
+          progressDialog.dismiss();
+      }
+
+      @Override
+      public void onProgressCallback(String action) {
+      }
+
+      @Override
+      public void onTrackingCallback(String action) {
+          progressDialog.dismiss();
+          Toast.makeText(VideoViewActivity.this, ""+action, Toast.LENGTH_SHORT).show();
+      }
+});
 ```
 
-- For get product:
+- For load another variation:
 
 ```java
- ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-        executor.execute(() -> {
-            /*
-             * Your task will be executed here
-             * its like doInBackground()
-             * */
-            Product product = designhubzVar.getProduct();
-            handler.post(() -> {
-                /*
-                 * its like onPostExecute()
-                 * */
+ progressDialog.show();
+ designhubzVar.loadVariation(new OnEyewearRequestCallback() {
+      @Override
+      public void onResult(Object action) {
+          progressDialog.dismiss();
+      }
+
+      @Override
+      public void onProgressCallback(String action) {
+      }
+
+      @Override
+      public void onTrackingCallback(String action) {
+
+      }
+});
+```
+- For switch context (3D/Tryon):
+
+```java
+ progressDialog.show();
+ designhubzVar.switchContext(new OnEyewearRequestCallback() {
+      @Override
+      public void onResult(Object action) {
+          progressDialog.dismiss();
+      }
+
+      @Override
+      public void onProgressCallback(String action) {
+      }
+
+      @Override
+      public void onTrackingCallback(String action) {
+         progressDialog.setMessage("" + action);
+      }
+});
+```
+- To take screenshot (returns bitmap image):
+
+```java
+ progressDialog.show();
+ designhubzVar.takeScreenshot(new OnEyewearRequestCallback() {
+      @Override
+      public void onResult(Object action) {
+                progressDialog.dismiss();
                 AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
-                builder.setTitle("DesignHubzSDK")
-                        .setMessage("" + new JSONHelper().convertObjecttoJson(product))
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            });
-        });
+                builder.setTitle("DesignHubzSDK");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                final AlertDialog dialog = builder.create();
+                LayoutInflater inflater = getLayoutInflater();
+                View dialogLayout = inflater.inflate(R.layout.image_preview_dialog, null);
+                dialog.setView(dialogLayout);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+                ImageView ivScreenshotPreview = (ImageView) dialogLayout.findViewById(R.id.ivScreenshotPreview);
+                Bitmap bitmap = (Bitmap) action;
+                float imageWidthInPX = (float)bitmap.getWidth();
+
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(Math.round(imageWidthInPX),
+                        Math.round(imageWidthInPX * (float)bitmap.getHeight() / (float)bitmap.getWidth()));
+                ivScreenshotPreview.setLayoutParams(layoutParams);
+                ivScreenshotPreview.setImageBitmap(bitmap);
+                dialog.show();
+      }
+
+      @Override
+      public void onProgressCallback(String action) {
+      }
+
+      @Override
+      public void onTrackingCallback(String action) {
+         progressDialog.setMessage("" + action);
+      }
+});
+
+```
+- Screenshot dialog design (image_preview_dialog.xml):
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/ivScreenshotPreview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
 ```
 
 ## Contributing
