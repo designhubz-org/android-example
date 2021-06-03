@@ -111,13 +111,6 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
 
     }
 
-    /**
-     * Request permission listner for watch is permission allow by user or not.
-     *
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -214,25 +207,40 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
     public void onCart(View view) {
     }
 
-    /**
-     * Release camera view on activity close.
-     */
     @Override
     protected void onDestroy() {
         designhubzVar.destroy();
         super.onDestroy();
     }
 
+    /**
+     * On page started.
+     *
+     * @param s      the s
+     * @param bitmap the bitmap
+     */
     @Override
     public void onPageStarted(String s, Bitmap bitmap) {
 
     }
 
+    /**
+     * On page finished.
+     *
+     * @param s the s
+     */
     @Override
     public void onPageFinished(String s) {
 
     }
 
+    /**
+     * On page error.
+     *
+     * @param i  the
+     * @param s  the s
+     * @param s1 the s 1
+     */
     @Override
     public void onPageError(int i, String s, String s1) {
 
@@ -251,37 +259,56 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
 //        alert.show();
 //    }
 
+    /**
+     * Initialize camera.
+     */
     @Override
     public void initializeCamera() {
 
     }
 
+    /**
+     * Detecting face.
+     */
     @Override
     public void detectingFace() {
 
     }
 
+    /**
+     * Initializing face points.
+     */
     @Override
     public void initializingFacePoints() {
 
     }
 
+    /**
+     * Initializing product points.
+     */
     @Override
     public void initializingProductPoints() {
 
     }
 
+    /**
+     * Preparing final result.
+     */
     @Override
     public void preparingFinalResult() {
 
     }
 
     /**
+     * The Result.
+     */
+    String result = "";
+
+    /**
      * Start camera.
      *
      * @param view the view
      */
-    String result = "";
     public void StartCamera(View view) {
 //        ExecutorService executor = Executors.newSingleThreadExecutor();
 //        Handler handler = new Handler(Looper.getMainLooper());
@@ -340,6 +367,11 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
 //        });
     }
 
+    /**
+     * Start eyewear.
+     *
+     * @param view the view
+     */
     public void StartEyewear(View view) {
         progressDialog.show();
         designhubzVar.startEyewearTryon(Constant.mProduct.getId(),new OnEyewearRequestCallback() {
@@ -360,6 +392,11 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
         });
     }
 
+    /**
+     * Switch context.
+     *
+     * @param view the view
+     */
     public void switchContext(View view) {
         progressDialog.show();
         designhubzVar.switchContext(new OnEyewearVariationCallback() {
@@ -374,6 +411,11 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
         });
     }
 
+    /**
+     * Load variation.
+     *
+     * @param view the view
+     */
     public void LoadVariation(View view) {
         progressDialog.show();
         designhubzVar.loadVariation("MP000000007163139",new OnEyewearVariationCallback() {
@@ -389,6 +431,11 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
         });
     }
 
+    /**
+     * Screenshot.
+     *
+     * @param view the view
+     */
     public void screenshot(View view) {
         progressDialog.show();
         designhubzVar.takeScreenshot(new OnEyewearScreenshotCallback() {

@@ -145,7 +145,8 @@ DesignhubzWebview.initializeComponents(this);
 
 ```java
 progressDialog.show();
-designhubzVar.startEyewearTryon(new OnEyewearRequestCallback() {
+//EyewearID,EyewearCallback
+designhubzVar.startEyewearTryon("MP000000006870126",new OnEyewearRequestCallback() {
       @Override
       public void onResult(Object action) {
           progressDialog.dismiss();
@@ -167,7 +168,8 @@ designhubzVar.startEyewearTryon(new OnEyewearRequestCallback() {
 
 ```java
  progressDialog.show();
- designhubzVar.loadVariation(new OnEyewearRequestCallback() {
+//EyewearID,EyewearCallback
+ designhubzVar.loadVariation("MP000000007163139",new OnEyewearVariationCallback() {
       @Override
       public void onResult(Object action) {
           progressDialog.dismiss();
@@ -175,11 +177,6 @@ designhubzVar.startEyewearTryon(new OnEyewearRequestCallback() {
 
       @Override
       public void onProgressCallback(String action) {
-      }
-
-      @Override
-      public void onTrackingCallback(String action) {
-
       }
 });
 ```
@@ -187,7 +184,7 @@ designhubzVar.startEyewearTryon(new OnEyewearRequestCallback() {
 
 ```java
  progressDialog.show();
- designhubzVar.switchContext(new OnEyewearRequestCallback() {
+ designhubzVar.switchContext(new OnEyewearVariationCallback() {
       @Override
       public void onResult(Object action) {
           progressDialog.dismiss();
@@ -196,18 +193,13 @@ designhubzVar.startEyewearTryon(new OnEyewearRequestCallback() {
       @Override
       public void onProgressCallback(String action) {
       }
-
-      @Override
-      public void onTrackingCallback(String action) {
-         progressDialog.setMessage("" + action);
-      }
 });
 ```
 - To take screenshot (returns bitmap image):
 
 ```java
  progressDialog.show();
- designhubzVar.takeScreenshot(new OnEyewearRequestCallback() {
+ designhubzVar.takeScreenshot(new OnEyewearScreenshotCallback() {
       @Override
       public void onResult(Object action) {
                 progressDialog.dismiss();
@@ -234,15 +226,6 @@ designhubzVar.startEyewearTryon(new OnEyewearRequestCallback() {
                 ivScreenshotPreview.setLayoutParams(layoutParams);
                 ivScreenshotPreview.setImageBitmap(bitmap);
                 dialog.show();
-      }
-
-      @Override
-      public void onProgressCallback(String action) {
-      }
-
-      @Override
-      public void onTrackingCallback(String action) {
-         progressDialog.setMessage("" + action);
       }
 });
 
