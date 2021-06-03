@@ -32,8 +32,11 @@ import com.designhubz.androidsdk.api.Product;
 import com.designhubz.androidsdk.api.enums.Eyewear;
 import com.designhubz.androidsdk.helper.Base64Util;
 import com.designhubz.androidsdk.interfaces.OnEyewearRequestCallback;
+import com.designhubz.androidsdk.interfaces.OnEyewearScreenshotCallback;
+import com.designhubz.androidsdk.interfaces.OnEyewearVariationCallback;
 import com.designhubz.androidsdk.interfaces.WebviewListener;
 import com.designhubzandroidexample.adapter.VideoviewProductListAdapter;
+import com.designhubzandroidexample.helper.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,11 +95,11 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
     }
 
     private void getProducts() {
-        videoViewProductList.add(new Product(1.365, "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 2300, 3000));
-        videoViewProductList.add(new Product(1.365, "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 5300, 7400));
-        videoViewProductList.add(new Product(1.365, "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 2500, 3050));
-        videoViewProductList.add(new Product(1.365, "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 4300, 5000));
-        videoViewProductList.add(new Product(1.365, "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 2400, 3200));
+        videoViewProductList.add(new Product("MP000000006870126", "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 2300, 3000));
+        videoViewProductList.add(new Product("MP000000006870126", "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 5300, 7400));
+        videoViewProductList.add(new Product("MP000000006870126", "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 2500, 3050));
+        videoViewProductList.add(new Product("MP000000006870126", "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 4300, 5000));
+        videoViewProductList.add(new Product("MP000000006870126", "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 2400, 3200));
 
         productListAdapter = new VideoviewProductListAdapter(this, videoViewProductList) {
             @Override
@@ -339,7 +342,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
 
     public void StartEyewear(View view) {
         progressDialog.show();
-        designhubzVar.startEyewearTryon(new OnEyewearRequestCallback() {
+        designhubzVar.startEyewearTryon(Constant.mProduct.getId(),new OnEyewearRequestCallback() {
             @Override
             public void onResult(Object action) {
                 progressDialog.dismiss();
@@ -359,7 +362,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
 
     public void switchContext(View view) {
         progressDialog.show();
-        designhubzVar.switchContext(new OnEyewearRequestCallback() {
+        designhubzVar.switchContext(new OnEyewearVariationCallback() {
             @Override
             public void onResult(Object action) {
                 progressDialog.dismiss();
@@ -367,18 +370,13 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
 
             @Override
             public void onProgressCallback(String action) {
-            }
-
-            @Override
-            public void onTrackingCallback(String action) {
-                progressDialog.setMessage("" + action);
             }
         });
     }
 
     public void LoadVariation(View view) {
         progressDialog.show();
-        designhubzVar.loadVariation(new OnEyewearRequestCallback() {
+        designhubzVar.loadVariation("MP000000007163139",new OnEyewearVariationCallback() {
             @Override
             public void onResult(Object action) {
 
@@ -388,17 +386,12 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
             @Override
             public void onProgressCallback(String action) {
             }
-
-            @Override
-            public void onTrackingCallback(String action) {
-
-            }
         });
     }
 
     public void screenshot(View view) {
         progressDialog.show();
-        designhubzVar.takeScreenshot(new OnEyewearRequestCallback() {
+        designhubzVar.takeScreenshot(new OnEyewearScreenshotCallback() {
             @Override
             public void onResult(Object action) {
                 progressDialog.dismiss();
@@ -425,15 +418,6 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
                 ivScreenshotPreview.setLayoutParams(layoutParams);
                 ivScreenshotPreview.setImageBitmap(bitmap);
                 dialog.show();
-            }
-
-            @Override
-            public void onProgressCallback(String action) {
-            }
-
-            @Override
-            public void onTrackingCallback(String action) {
-                progressDialog.setMessage("" + action);
             }
         });
     }
