@@ -145,21 +145,20 @@ DesignhubzWebview.initializeComponents(this);
 
 ```java
 progressDialog.show();
-//EyewearID,EyewearCallback
-designhubzVar.startEyewearTryon("MP000000006870126",new OnEyewearRequestCallback() {
+//Pass Eyewear ID and Start Eyewear Callback to the SDK
+designhubzVar.startEyewearTryon("MP000000006870126",new OnStartEyewearRequestCallback() {
       @Override
-      public void onResult(Object action) {
+      public void onResult(List<Variation> variations) {
           progressDialog.dismiss();
       }
 
       @Override
-      public void onProgressCallback(String action) {
-      }
+      public void onProgressCallback(Progress progress) {}
 
       @Override
-      public void onTrackingCallback(String action) {
+      public void onTrackingCallback(String message) {
           progressDialog.dismiss();
-          Toast.makeText(VideoViewActivity.this, ""+action, Toast.LENGTH_SHORT).show();
+          Toast.makeText(VideoViewActivity.this, ""+message, Toast.LENGTH_SHORT).show();
       }
 });
 ```
@@ -168,66 +167,69 @@ designhubzVar.startEyewearTryon("MP000000006870126",new OnEyewearRequestCallback
 
 ```java
  progressDialog.show();
-//EyewearID,EyewearCallback
+//Pass Load Variation Callback
  designhubzVar.loadVariation("MP000000007163139",new OnEyewearVariationCallback() {
       @Override
-      public void onResult(Object action) {
+      public void onResult(List<Variation> variations) {
           progressDialog.dismiss();
       }
 
       @Override
-      public void onProgressCallback(String action) {
-      }
+      public void onProgressCallback(Progress progress) {}
 });
 ```
 - For switch context (3D/Tryon):
 
 ```java
  progressDialog.show();
- designhubzVar.switchContext(new OnEyewearVariationCallback() {
+ //Pass Switch Context Callback
+ designhubzVar.switchContext(new OnEyewearSwitchCallback() {
       @Override
-      public void onResult(Object action) {
+      public void onResult(String result) {
           progressDialog.dismiss();
       }
 
       @Override
-      public void onProgressCallback(String action) {
-      }
+      public void onProgressCallback(Progress progress) {}
 });
 ```
 - To take screenshot (returns bitmap image):
 
 ```java
  progressDialog.show();
+ //Pass Screenshot Callback
  designhubzVar.takeScreenshot(new OnEyewearScreenshotCallback() {
       @Override
-      public void onResult(Object action) {
+      public void onResult(Bitmap bitmap) {
                 progressDialog.dismiss();
-                AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
-                builder.setTitle("DesignHubzSDK");
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                final AlertDialog dialog = builder.create();
-                LayoutInflater inflater = getLayoutInflater();
-                View dialogLayout = inflater.inflate(R.layout.image_preview_dialog, null);
-                dialog.setView(dialogLayout);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-                ImageView ivScreenshotPreview = (ImageView) dialogLayout.findViewById(R.id.ivScreenshotPreview);
-                Bitmap bitmap = (Bitmap) action;
-                float imageWidthInPX = (float)bitmap.getWidth();
-
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(Math.round(imageWidthInPX),
-                        Math.round(imageWidthInPX * (float)bitmap.getHeight() / (float)bitmap.getWidth()));
-                ivScreenshotPreview.setLayoutParams(layoutParams);
-                ivScreenshotPreview.setImageBitmap(bitmap);
-                dialog.show();
+                showImageInDialog(bitmap);
       }
 });
+
+private void showImageInDialog(Bitmap bitmap) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
+        builder.setTitle("DesignHubzSDK");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogLayout = inflater.inflate(R.layout.image_preview_dialog, null);
+        dialog.setView(dialogLayout);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        ImageView ivScreenshotPreview = (ImageView) dialogLayout.findViewById(R.id.ivScreenshotPreview);
+        float imageWidthInPX = (float)bitmap.getWidth();
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(Math.round(imageWidthInPX),
+                Math.round(imageWidthInPX * (float)bitmap.getHeight() / (float)bitmap.getWidth()));
+        ivScreenshotPreview.setLayoutParams(layoutParams);
+        ivScreenshotPreview.setImageBitmap(bitmap);
+        dialog.show();
+    }
 
 ```
 - Screenshot dialog design (image_preview_dialog.xml):
