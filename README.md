@@ -202,34 +202,9 @@ designhubzVar.startEyewearTryon("MP000000006870126",new OnStartEyewearRequestCal
       @Override
       public void onResult(Bitmap bitmap) {
                 progressDialog.dismiss();
-                showImageInDialog(bitmap);
+                // write your code to process or show image
       }
 });
-
-private void showImageInDialog(Bitmap bitmap) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
-        builder.setTitle("DesignHubzSDK");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        final AlertDialog dialog = builder.create();
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogLayout = inflater.inflate(R.layout.image_preview_dialog, null);
-        dialog.setView(dialogLayout);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        ImageView ivScreenshotPreview = (ImageView) dialogLayout.findViewById(R.id.ivScreenshotPreview);
-        float imageWidthInPX = (float)bitmap.getWidth();
-
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(Math.round(imageWidthInPX),
-                Math.round(imageWidthInPX * (float)bitmap.getHeight() / (float)bitmap.getWidth()));
-        ivScreenshotPreview.setLayoutParams(layoutParams);
-        ivScreenshotPreview.setImageBitmap(bitmap);
-        dialog.show();
-    }
 
 ```
 - Screenshot dialog design (image_preview_dialog.xml):
