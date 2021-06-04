@@ -171,10 +171,10 @@ designhubzVar.startEyewearTryon("MP000000006870126",new OnStartEyewearRequestCal
       }
 
       @Override
-      public void onTrackingCallback(String message) {
+      public void onTrackingCallback(TrackingStatus trackingStatus) {
           // write your code to process or show tracking status
           progressDialog.dismiss();
-          Toast.makeText(VideoViewActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+          Toast.makeText(VideoViewActivity.this, ""+trackingStatus.getValue(), Toast.LENGTH_SHORT).show();
       }
 });
 ```
