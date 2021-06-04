@@ -145,18 +145,34 @@ DesignhubzWebview.initializeComponents(this);
 
 ```java
 progressDialog.show();
-//Pass Eyewear ID and Start Eyewear Callback to the SDK
+
+/**
+ * startEyewearTryon
+ *
+ * Load eyewear widget of given eyewear id
+ *
+ * @param eyewearID the eyewear id
+ * @param onStartEyewearRequestCallback override three callback methods
+ *        1. onResult callbacks eyewear variation list
+ *        2. onProgressCallback callbacks progress update
+ *        3. onTrackingCallback callbacks the status of eyewear tracking like Analyzing,Tracking,FaceNotFound,etc.
+ */
+
 designhubzVar.startEyewearTryon("MP000000006870126",new OnStartEyewearRequestCallback() {
       @Override
       public void onResult(List<Variation> variations) {
+          // write your code to process or show variations
           progressDialog.dismiss();
       }
 
       @Override
-      public void onProgressCallback(Progress progress) {}
+      public void onProgressCallback(Progress progress) {
+          // write your code to process or show progress
+      }
 
       @Override
       public void onTrackingCallback(String message) {
+          // write your code to process or show tracking status
           progressDialog.dismiss();
           Toast.makeText(VideoViewActivity.this, ""+message, Toast.LENGTH_SHORT).show();
       }
@@ -166,39 +182,69 @@ designhubzVar.startEyewearTryon("MP000000006870126",new OnStartEyewearRequestCal
 - For load another variation:
 
 ```java
- progressDialog.show();
-//Pass Load Variation Callback
- designhubzVar.loadVariation("MP000000007163139",new OnEyewearVariationCallback() {
+progressDialog.show();
+/**
+ * loadVariation
+ *
+ * Load eyewear widget variation of passed eyewear variation id
+ *
+ * @param eyewearID the eyewear id
+ * @param OnEyewearVariationCallback override two callback methods
+ *        1. onResult callbacks eyewear variation list
+ *        2. onProgressCallback callbacks progress update
+ */
+designhubzVar.loadVariation("MP000000007163139",new OnEyewearVariationCallback() {
       @Override
       public void onResult(List<Variation> variations) {
+          // write your code to process or show variations
           progressDialog.dismiss();
       }
 
       @Override
-      public void onProgressCallback(Progress progress) {}
+      public void onProgressCallback(Progress progress) {
+          // write your code to process or show progress
+      }
 });
 ```
 - For switch context (3D/Tryon):
 
 ```java
- progressDialog.show();
- //Pass Switch Context Callback
- designhubzVar.switchContext(new OnEyewearSwitchCallback() {
+progressDialog.show();
+ /**
+ * switchContext
+ *
+ * Switch context from 3D to Tryon and Tryon to 3D
+ *
+ * @param OnEyewearSwitchCallback override two callback methods
+ *        1. onResult callbacks string result
+ *        2. onProgressCallback callbacks progress update
+ */
+designhubzVar.switchContext(new OnEyewearSwitchCallback() {
       @Override
       public void onResult(String result) {
+          // write your code to process or show result
           progressDialog.dismiss();
       }
 
       @Override
-      public void onProgressCallback(Progress progress) {}
+      public void onProgressCallback(Progress progress) {
+          // write your code to process or show progress
+      }
 });
 ```
 - To take screenshot (returns bitmap image):
 
 ```java
- progressDialog.show();
- //Pass Screenshot Callback
- designhubzVar.takeScreenshot(new OnEyewearScreenshotCallback() {
+progressDialog.show();
+ /**
+ * takeScreenshot
+ *
+ * Take screenshot of tryon or 3D tryon and returns Bitmap image as result
+ *
+ * @param OnEyewearScreenshotCallback override one callback methods
+ *        1. onResult callbacks Bitmap image of tryon
+ */
+designhubzVar.takeScreenshot(new OnEyewearScreenshotCallback() {
       @Override
       public void onResult(Bitmap bitmap) {
                 progressDialog.dismiss();

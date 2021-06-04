@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.designhubz.androidsdk.DesignhubzWebview;
 import com.designhubz.androidsdk.Permissions;
 import com.designhubz.androidsdk.api.enums.Eyewear;
+import com.designhubz.androidsdk.api.enums.TrackingStatus;
 import com.designhubz.androidsdk.helper.Progress;
 import com.designhubz.androidsdk.helper.RequestResponseTryon;
 import com.designhubz.androidsdk.helper.Variation;
@@ -148,22 +149,35 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
      */
     public void StartEyewear(View view) {
         progressDialog.show();
-        //Pass Eyewear ID and Start Eyewear Callback to the SDK
+        /**
+         * startEyewearTryon
+         *
+         * Load eyewear widget of given eyewear id
+         *
+         * @param eyewearID the eyewear id
+         * @param onStartEyewearRequestCallback override three callback methods
+         *        1. onResult callbacks eyewear variation list
+         *        2. onProgressCallback callbacks progress update
+         *        3. onTrackingCallback callbacks the status of eyewear tracking like Analyzing,Tracking,FaceNotFound,etc.
+         */
         designhubzVar.startEyewearTryon(Constant.mProduct.getId(),new OnStartEyewearRequestCallback() {
 
             @Override
             public void onResult(List<Variation> variations) {
+                // write your code to process or show variations
                 progressDialog.dismiss();
             }
 
             @Override
             public void onProgressCallback(Progress progress) {
+                // write your code to process or show progress
             }
 
             @Override
-            public void onTrackingCallback(String message) {
+            public void onTrackingCallback(TrackingStatus trackingStatus) {
+                // write your code to process or show tracking status
                 progressDialog.dismiss();
-                Toast.makeText(VideoViewActivity.this, ""+message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(VideoViewActivity.this, ""+trackingStatus.getValue(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -175,15 +189,26 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
      */
     public void LoadVariation(View view) {
         progressDialog.show();
-        //Pass Load Variation Callback
+        /**
+         * loadVariation
+         *
+         * Load eyewear widget variation of passed eyewear variation id
+         *
+         * @param eyewearID the eyewear id
+         * @param OnEyewearVariationCallback override two callback methods
+         *        1. onResult callbacks eyewear variation list
+         *        2. onProgressCallback callbacks progress update
+         */
         designhubzVar.loadVariation("MP000000007163139",new OnEyewearVariationCallback() {
             @Override
             public void onResult(List<Variation> variations) {
+                // write your code to process or show variations
                 progressDialog.dismiss();
             }
 
             @Override
             public void onProgressCallback(Progress progress) {
+                // write your code to process or show progress
             }
         });
     }
@@ -195,15 +220,26 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
      */
     public void switchContext(View view) {
         progressDialog.show();
-        //Pass Switch Context Callback
+        /**
+         * switchContext
+         *
+         * Switch context from 3D to Tryon and Tryon to 3D
+         *
+         * @param OnEyewearSwitchCallback override two callback methods
+         *        1. onResult callbacks string result
+         *        2. onProgressCallback callbacks progress update
+         */
         designhubzVar.switchContext(new OnEyewearSwitchCallback() {
             @Override
             public void onResult(String result) {
+                // write your code to process or show result
                 progressDialog.dismiss();
             }
 
             @Override
-            public void onProgressCallback(Progress progress) {}
+            public void onProgressCallback(Progress progress) {
+                // write your code to process or show progress
+            }
         });
     }
 
@@ -214,11 +250,19 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
      */
     public void screenshot(View view) {
         progressDialog.show();
-        //Pass Screenshot Callback
+        /**
+         * takeScreenshot
+         *
+         * Take screenshot of tryon or 3D tryon and returns Bitmap image as result
+         *
+         * @param OnEyewearScreenshotCallback override one callback methods
+         *        1. onResult callbacks Bitmap image of tryon
+         */
         designhubzVar.takeScreenshot(new OnEyewearScreenshotCallback() {
             @Override
             public void onResult(Bitmap bitmap) {
                 progressDialog.dismiss();
+                // write your code to process or show image
                 showImageInDialog(bitmap);
             }
         });
