@@ -1,35 +1,40 @@
 package com.designhubzandroidexample;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.FrameLayout;
-import android.widget.TextView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.PagerSnapHelper;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SnapHelper;
 
 import com.designhubz.androidsdk.DesignhubzWebview;
 import com.designhubz.androidsdk.Permissions;
-import com.designhubz.androidsdk.helper.Product;
+import com.designhubz.androidsdk.api.enums.Eyewear;
+import com.designhubz.androidsdk.api.enums.TrackingStatus;
+import com.designhubz.androidsdk.helper.Progress;
+import com.designhubz.androidsdk.helper.RequestResponseTryon;
+import com.designhubz.androidsdk.helper.Variation;
+import com.designhubz.androidsdk.interfaces.OnEyewearSwitchCallback;
+import com.designhubz.androidsdk.interfaces.OnStartEyewearRequestCallback;
+import com.designhubz.androidsdk.interfaces.OnEyewearScreenshotCallback;
+import com.designhubz.androidsdk.interfaces.OnEyewearVariationCallback;
 import com.designhubz.androidsdk.interfaces.WebviewListener;
-import com.designhubzandroidexample.adapter.VideoviewProductListAdapter;
-import com.google.android.material.snackbar.Snackbar;
+import com.designhubzandroidexample.helper.Constant;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.designhubz.androidsdk.helper.RequestCodes.REQUEST_CODE_PERMISSION;
-import static com.designhubzandroidexample.helper.Constant.mProduct;
 
 /**
  * The type Video view activity.
@@ -37,11 +42,8 @@ import static com.designhubzandroidexample.helper.Constant.mProduct;
 public class VideoViewActivity extends AppCompatActivity implements WebviewListener {
 
     private DesignhubzWebview designhubzVar;
-    private TextView tvDesc, tvBlack, tvRed, tvBlue;
-    private RecyclerView rcvProduct;
-    private List<Product> videoViewProductList = new ArrayList<>();
-    private VideoviewProductListAdapter productListAdapter;
     private FrameLayout flRoot;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,57 +56,29 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
     private void main() {
         flRoot = findViewById(R.id.flRoot);
         designhubzVar = findViewById(R.id.wvCamera);
-        rcvProduct = findViewById(R.id.rcvProduct);
-        tvDesc = findViewById(R.id.tvDesc);
-        tvBlack = findViewById(R.id.tvBlack);
-        tvRed = findViewById(R.id.tvRed);
-        tvBlue = findViewById(R.id.tvBlue);
 
-        designhubzVar.initView(mProduct);
+        designhubzVar.initView();
 
-        designhubzVar.setListener(this, this);
+        designhubzVar.setListener(this);
 
-        designhubzVar.loadCamera(this);
+        designhubzVar.initializeComponents(this);
 
-        rcvProduct.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        designhubzVar.setEyewearSize(Eyewear.Size.Small);
+        designhubzVar.setEyewearFit(Eyewear.Fit.JustRight);
 
-        SnapHelper snapHelper = new PagerSnapHelper();
-        snapHelper.attachToRecyclerView(rcvProduct);
-
-        getProducts();
-    }
-
-    private void getProducts() {
-        videoViewProductList.add(new Product(1.365, "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 2300, 3000));
-        videoViewProductList.add(new Product(1.365, "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 5300, 7400));
-        videoViewProductList.add(new Product(1.365, "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 2500, 3050));
-        videoViewProductList.add(new Product(1.365, "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 4300, 5000));
-        videoViewProductList.add(new Product(1.365, "Fastrack", "Fastrack P254678D Green Anti-Reflactive Sunglasses", 2400, 3200));
-
-        productListAdapter = new VideoviewProductListAdapter(this, videoViewProductList) {
-            @Override
-            public void onClickItem(int adapterPosition) {
-
-            }
-        };
-        rcvProduct.setAdapter(productListAdapter);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setCancelable(false);
 
     }
 
-    /**
-     * Request permission listner for watch is permission allow by user or not.
-     *
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_PERMISSION) {
             if (Permissions.checkPermission(this)) {
-                DesignhubzWebview.loadCamera(this);
+                designhubzVar.initializeComponents(this);
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
                 builder.setTitle("Permission Denied")
@@ -122,54 +96,6 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
     }
 
     /**
-     * On black click.
-     *
-     * @param view the view
-     */
-    public void onBlackClick(View view) {
-        String colorCode = "#" + Integer.toHexString(ContextCompat.getColor(this, R.color.item_black));
-        DesignhubzWebview.changeColor(colorCode);
-        tvBlack.setVisibility(View.VISIBLE);
-        tvRed.setVisibility(View.INVISIBLE);
-        tvBlue.setVisibility(View.INVISIBLE);
-    }
-
-    /**
-     * On red click.
-     *
-     * @param view the view
-     */
-    public void onRedClick(View view) {
-        String colorCode = "#" + Integer.toHexString(ContextCompat.getColor(this, R.color.item_red));
-        DesignhubzWebview.changeColor(colorCode);
-        tvBlack.setVisibility(View.INVISIBLE);
-        tvRed.setVisibility(View.VISIBLE);
-        tvBlue.setVisibility(View.INVISIBLE);
-    }
-
-    /**
-     * On blue click.
-     *
-     * @param view the view
-     */
-    public void onBlueClick(View view) {
-        String colorCode = "#" + Integer.toHexString(ContextCompat.getColor(this, R.color.item_blue));
-        DesignhubzWebview.changeColor(colorCode);
-        tvBlack.setVisibility(View.INVISIBLE);
-        tvRed.setVisibility(View.INVISIBLE);
-        tvBlue.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * On switch camera.
-     *
-     * @param view the view
-     */
-    public void onSwitchCamera(View view) {
-        DesignhubzWebview.switchCamera();
-    }
-
-    /**
      * On close.
      *
      * @param view the view
@@ -178,100 +104,192 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
         onBackPressed();
     }
 
-    /**
-     * On filter.
-     *
-     * @param view the view
-     */
-    public void onFilter(View view) {
-    }
-
-    /**
-     * On cart.
-     *
-     * @param view the view
-     */
-    public void onCart(View view) {
-    }
-
-    /**
-     * Release camera view on activity close.
-     */
     @Override
     protected void onDestroy() {
         designhubzVar.destroy();
         super.onDestroy();
     }
 
+    /**
+     * On page started.
+     *
+     * @param s      the s
+     * @param bitmap the bitmap
+     */
     @Override
     public void onPageStarted(String s, Bitmap bitmap) {
 
     }
 
+    /**
+     * On page finished.
+     *
+     * @param s the s
+     */
     @Override
     public void onPageFinished(String s) {
 
     }
 
+    /**
+     * On page error.
+     *
+     * @param i  the
+     * @param s  the s
+     * @param s1 the s 1
+     */
     @Override
     public void onPageError(int i, String s, String s1) {
-
     }
 
-    @Override
-    public void onReceiveResult(String result) {
+    /**
+     * Start eyewear.
+     *
+     * @param view the view
+     */
+    public void StartEyewear(View view) {
+        progressDialog.show();
+        /**
+         * startEyewearTryon
+         *
+         * Load eyewear widget of given eyewear id
+         *
+         * @param eyewearID the eyewear id
+         * @param onStartEyewearRequestCallback override three callback methods
+         *        1. onResult callbacks eyewear variation list
+         *        2. onProgressCallback callbacks progress update
+         *        3. onTrackingCallback callbacks the status of eyewear tracking like Analyzing,Tracking,FaceNotFound,etc.
+         */
+        designhubzVar.startEyewearTryon(Constant.mProduct.getId(),new OnStartEyewearRequestCallback() {
+
+            @Override
+            public void onResult(List<Variation> variations) {
+                // write your code to process or show variations
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onProgressCallback(Progress progress) {
+                // write your code to process or show progress
+            }
+
+            @Override
+            public void onTrackingCallback(TrackingStatus trackingStatus) {
+                // write your code to process or show tracking status
+                progressDialog.dismiss();
+                Toast.makeText(VideoViewActivity.this, ""+trackingStatus.getValue(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Load variation.
+     *
+     * @param view the view
+     */
+    public void LoadVariation(View view) {
+        progressDialog.show();
+        /**
+         * loadVariation
+         *
+         * Load eyewear widget variation of passed eyewear variation id
+         *
+         * @param eyewearID the eyewear id
+         * @param OnEyewearVariationCallback override two callback methods
+         *        1. onResult callbacks eyewear variation list
+         *        2. onProgressCallback callbacks progress update
+         */
+        designhubzVar.loadVariation("MP000000007163139",new OnEyewearVariationCallback() {
+            @Override
+            public void onResult(List<Variation> variations) {
+                // write your code to process or show variations
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onProgressCallback(Progress progress) {
+                // write your code to process or show progress
+            }
+        });
+    }
+
+    /**
+     * Switch context.
+     *
+     * @param view the view
+     */
+    public void switchContext(View view) {
+        progressDialog.show();
+        /**
+         * switchContext
+         *
+         * Switch context from 3D to Tryon and Tryon to 3D
+         *
+         * @param OnEyewearSwitchCallback override two callback methods
+         *        1. onResult callbacks string result
+         *        2. onProgressCallback callbacks progress update
+         */
+        designhubzVar.switchContext(new OnEyewearSwitchCallback() {
+            @Override
+            public void onResult(String result) {
+                // write your code to process or show result
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onProgressCallback(Progress progress) {
+                // write your code to process or show progress
+            }
+        });
+    }
+
+    /**
+     * Screenshot.
+     *
+     * @param view the view
+     */
+    public void screenshot(View view) {
+        progressDialog.show();
+        /**
+         * takeScreenshot
+         *
+         * Take screenshot of tryon or 3D tryon and returns Bitmap image as result
+         *
+         * @param OnEyewearScreenshotCallback override one callback methods
+         *        1. onResult callbacks Bitmap image of tryon
+         */
+        designhubzVar.takeScreenshot(new OnEyewearScreenshotCallback() {
+            @Override
+            public void onResult(Bitmap bitmap) {
+                progressDialog.dismiss();
+                // write your code to process or show image
+                showImageInDialog(bitmap);
+            }
+        });
+    }
+
+    private void showImageInDialog(Bitmap bitmap) {
         AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
-        builder.setTitle("DesignHubzSDK")
-                .setMessage(""+result)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
+        builder.setTitle("DesignHubzSDK");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogLayout = inflater.inflate(R.layout.image_preview_dialog, null);
+        dialog.setView(dialogLayout);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-    @Override
-    public void initializeCamera() {
+        ImageView ivScreenshotPreview = (ImageView) dialogLayout.findViewById(R.id.ivScreenshotPreview);
+        float imageWidthInPX = (float)bitmap.getWidth();
 
-    }
-
-    @Override
-    public void detectingFace() {
-
-    }
-
-    @Override
-    public void initializingFacePoints() {
-
-    }
-
-    @Override
-    public void initializingProductPoints() {
-
-    }
-
-    @Override
-    public void preparingFinalResult() {
-
-    }
-
-    /**
-     * Start camera.
-     *
-     * @param view the view
-     */
-    public void StartCamera(View view) {
-        designhubzVar.startCamera();
-    }
-
-
-    /**
-     * Get product.
-     *
-     * @param view the view
-     */
-    public void GetProduct(View view) {
-        designhubzVar.getProduct();
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(Math.round(imageWidthInPX),
+                Math.round(imageWidthInPX * (float)bitmap.getHeight() / (float)bitmap.getWidth()));
+        ivScreenshotPreview.setLayoutParams(layoutParams);
+        ivScreenshotPreview.setImageBitmap(bitmap);
+        dialog.show();
     }
 }

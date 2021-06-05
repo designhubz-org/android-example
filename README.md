@@ -92,10 +92,12 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
  
         designhubzVar = findViewById(R.id.wvCamera);
 
-        //Register webview client listener here
-        designhubzVar.setListener(this,this);
+        designhubzVar.initView();
 
-        DesignhubzWebview.loadCamera(this);
+        //Register webview client listener here
+        designhubzVar.setListener(this);
+
+        designhubzVar.initializeComponents(this);
     }
 
     /**
@@ -111,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 50) {
             if (Permissions.checkPermission(this)) {
-                DesignhubzWebview.loadCamera(this);
+                DesignhubzWebview.initializeComponents(this);
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
                 builder.setTitle("Permission Denied")
@@ -127,33 +129,142 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
             }
         }
     }
-
-    // Handle result return from camera actions
-    @Override
-    public void onReceiveResult(String action) {  
-        AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
-        builder.setTitle("DesignhubzSDK")
-                .setMessage(""+result)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show(); 
-    }
         
 }
 ```
 
-- For webview camera:
+- To Initialize Components:
 
 ```java
-DesignhubzWebview.loadCamera(this);
+DesignhubzWebview.initializeComponents(this);
 ```
 
 
-- For start camera:
+- To start the eyewear try-on widget:
 
 ```java
-designhubzVar.startCamera();
+progressDialog.show();
+
+/**
+ * startEyewearTryon
+ *
+ * Load eyewear widget of given eyewear id
+ *
+ * @param eyewearID the eyewear id
+ * @param onStartEyewearRequestCallback override three callback methods
+ *        1. onResult callbacks eyewear variation list
+ *        2. onProgressCallback callbacks progress update
+ *        3. onTrackingCallback callbacks the status of eyewear tracking like Analyzing,Tracking,FaceNotFound,etc.
+ */
+
+designhubzVar.startEyewearTryon("MP000000006870126",new OnStartEyewearRequestCallback() {
+      @Override
+      public void onResult(List<Variation> variations) {
+          // write your code to process or show variations
+          progressDialog.dismiss();
+      }
+
+      @Override
+      public void onProgressCallback(Progress progress) {
+          // write your code to process or show progress
+      }
+
+      @Override
+      public void onTrackingCallback(TrackingStatus trackingStatus) {
+          // write your code to process or show tracking status
+          progressDialog.dismiss();
+          Toast.makeText(VideoViewActivity.this, ""+trackingStatus.getValue(), Toast.LENGTH_SHORT).show();
+      }
+});
+```
+
+- To  load another variation:
+
+```java
+progressDialog.show();
+/**
+ * loadVariation
+ *
+ * Load eyewear widget variation of passed eyewear variation id
+ *
+ * @param eyewearID the eyewear id
+ * @param OnEyewearVariationCallback override two callback methods
+ *        1. onResult callbacks eyewear variation list
+ *        2. onProgressCallback callbacks progress update
+ */
+designhubzVar.loadVariation("MP000000007163139",new OnEyewearVariationCallback() {
+      @Override
+      public void onResult(List<Variation> variations) {
+          // write your code to process or show variations
+          progressDialog.dismiss();
+      }
+
+      @Override
+      public void onProgressCallback(Progress progress) {
+          // write your code to process or show progress
+      }
+});
+```
+- To switch context (toggle between 3D/Tryon):
+
+```java
+progressDialog.show();
+ /**
+ * switchContext
+ *
+ * Switch context from 3D to Tryon and Tryon to 3D
+ *
+ * @param OnEyewearSwitchCallback override two callback methods
+ *        1. onResult callbacks string result
+ *        2. onProgressCallback callbacks progress update
+ */
+designhubzVar.switchContext(new OnEyewearSwitchCallback() {
+      @Override
+      public void onResult(String result) {
+          // write your code to process or show result
+          progressDialog.dismiss();
+      }
+
+      @Override
+      public void onProgressCallback(Progress progress) {
+          // write your code to process or show progress
+      }
+});
+```
+- To take a screenshot (returns bitmap image):
+
+```java
+progressDialog.show();
+ /**
+ * takeScreenshot
+ *
+ * Take screenshot of tryon or 3D tryon and returns Bitmap image as result
+ *
+ * @param OnEyewearScreenshotCallback override one callback methods
+ *        1. onResult callbacks Bitmap image of tryon
+ */
+designhubzVar.takeScreenshot(new OnEyewearScreenshotCallback() {
+      @Override
+      public void onResult(Bitmap bitmap) {
+                progressDialog.dismiss();
+                // write your code to process or show image
+      }
+});
+
+```
+- Screenshot dialog design (image_preview_dialog.xml):
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/ivScreenshotPreview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
 ```
