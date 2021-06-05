@@ -1,7 +1,6 @@
 ## designhubz Android Example
 [![Platform](https://img.shields.io/badge/platform-android-green.svg)](http://developer.android.com/index.html)
 [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=7)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat)](http://opensource.org/licenses/MIT)
 
 Designhubz Android Example is written in Java for interact with the 3D/AR widgets via Designhubz Android library.
 
@@ -35,7 +34,7 @@ Designhubz Android Example is written in Java for interact with the 3D/AR widget
     }
  }
 ```
-- In your app’s build.gradle add this dependency:
+- In your appâ€™s build.gradle add this dependency:
 
 ```gradle
 dependencies{
@@ -134,14 +133,14 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
 }
 ```
 
-- For Initialize Components:
+- To Initialize Components:
 
 ```java
 DesignhubzWebview.initializeComponents(this);
 ```
 
 
-- For Start the eyewear try-on widget:
+- To start the eyewear try-on widget:
 
 ```java
 progressDialog.show();
@@ -179,7 +178,7 @@ designhubzVar.startEyewearTryon("MP000000006870126",new OnStartEyewearRequestCal
 });
 ```
 
-- For load another variation:
+- To  load another variation:
 
 ```java
 progressDialog.show();
@@ -206,7 +205,7 @@ designhubzVar.loadVariation("MP000000007163139",new OnEyewearVariationCallback()
       }
 });
 ```
-- For switch context (3D/Tryon):
+- To switch context (toggle between 3D/Tryon):
 
 ```java
 progressDialog.show();
@@ -232,7 +231,7 @@ designhubzVar.switchContext(new OnEyewearSwitchCallback() {
       }
 });
 ```
-- To take screenshot (returns bitmap image):
+- To take a screenshot (returns bitmap image):
 
 ```java
 progressDialog.show();
@@ -269,11 +268,3 @@ designhubzVar.takeScreenshot(new OnEyewearScreenshotCallback() {
 
 </LinearLayout>
 ```
-
-## Contributing
-
-All contributions are welcome! If you wish to contribute, please create an issue first so that your feature, problem or question can be discussed.
-
-## License
-
-This project is licensed under the terms of the [MIT License](https://opensource.org/licenses/MIT).
