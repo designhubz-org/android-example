@@ -286,9 +286,9 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
         ImageView ivScreenshotPreview = (ImageView) dialogLayout.findViewById(R.id.ivScreenshotPreview);
         float imageWidthInPX = (float)bitmap.getWidth();
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(Math.round(imageWidthInPX),
-                Math.round(imageWidthInPX * (float)bitmap.getHeight() / (float)bitmap.getWidth()));
-        ivScreenshotPreview.setLayoutParams(layoutParams);
+//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(Math.round(imageWidthInPX),
+//                Math.round(imageWidthInPX * (float)bitmap.getHeight() / (float)bitmap.getWidth()));
+//        ivScreenshotPreview.setLayoutParams(layoutParams);
         ivScreenshotPreview.setImageBitmap(bitmap);
         dialog.show();
     }
