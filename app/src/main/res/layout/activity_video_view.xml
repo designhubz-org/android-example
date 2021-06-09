@@ -124,6 +124,33 @@
                 android:layout_weight="1"
                 android:onClick="screenshot"
                 android:id="@+id/btScreenshot"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="Fetch Fit"
+                android:layout_weight="1"
+                android:onClick="fetchFit"
+                android:id="@+id/btfetchfit"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="Fetch Recommendation"
+                android:layout_weight="1"
+                android:onClick="fetchRecommendation"
+                android:id="@+id/btfetchRecommendation"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="Send Stat"
+                android:layout_weight="1"
+                android:onClick="sendStat"
+                android:id="@+id/btSendStat"/>
         </LinearLayout>
     </HorizontalScrollView>
 
