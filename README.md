@@ -41,7 +41,7 @@ dependencies{
     /**
      * Step 2 : Add this android-sdk dependency
      */
-    implementation 'com.github.designhubz-org:android-sdk:1.2'
+    implementation 'com.github.designhubz-org:android-sdk:1.3'
 }
 ```
 
@@ -252,19 +252,70 @@ designhubzVar.takeScreenshot(new OnEyewearScreenshotCallback() {
 });
 
 ```
-- Screenshot dialog design (image_preview_dialog.xml):
 
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+- To Fetch fit information:
 
-    <ImageView
-        android:id="@+id/ivScreenshotPreview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+```java
+progressDialog.show();
+/**
+* fetchFitInfo
+*
+* Fetch fit info of eyewear
+*
+* @param OnEyewearFetchFitInfo override One callback methods
+      *1. onResult callbacks receive two result i.e Eyewear Fit and Eyewear Size
+*/
+designhubzVar.fetchFitInfo(new OnEyewearFetchFitInfo() {
+        @Override
+        public void onResult(Eyewear.Fit fit, Eyewear.Size size) {
+            // write your code to process or show fit info
+            Toast.makeText(VideoViewActivity.this, "FIT:-"+fit.getValue()+" SIZE:-"+size.getValue(), Toast.LENGTH_SHORT).show();
+            progressDialog.dismiss();
+        }
+});
 
-</LinearLayout>
+```
+- To Fetch recommendations (pass number of recommendations needed):
+
+```java
+progressDialog.show();
+/**
+* fetchRecommendations
+*
+* Fetch eyewear Recommendations
+*
+* @param noOfRecomendation the no of recommendations want to get
+* @param OnEyewearRecommendation override One callback methods
+*        1. onResult callbacks recommendation list
+*/
+designhubzVar.fetchRecommendations(<"pass here number of recommandation">,new OnEyewearRecommendation() {
+    @Override
+    public void onResult(List<Recommendations> recommendations) {
+        // write your code to process or show recommendations
+        progressDialog.dismiss();
+    }
+});
+
+```
+- To Send statistics To SDK (Stats can be: Whishlisted, AddedToCart, SnapshotSaved):
+
+```java
+progressDialog.show();
+/**
+* sendStat
+*
+* Send statistics To SDK
+*
+* @param Stat Pass enum of the stats it can be Whishlisted, AddedToCart, SnapshotSaved
+* @param OnEyewearSendStat override One callback methods
+*        1. onResult callbacks string result
+*/
+designhubzVar.sendStat(Stat.Whishlisted,new OnEyewearSendStat() {
+    @Override
+    public void onResult(String result) {
+        // write your code to process or show result
+        progressDialog.dismiss();
+    }
+});
+
 ```

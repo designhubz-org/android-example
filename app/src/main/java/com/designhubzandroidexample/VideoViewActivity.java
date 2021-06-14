@@ -21,10 +21,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.designhubz.androidsdk.DesignhubzWebview;
 import com.designhubz.androidsdk.Permissions;
 import com.designhubz.androidsdk.api.enums.Eyewear;
+import com.designhubz.androidsdk.api.enums.Stat;
 import com.designhubz.androidsdk.api.enums.TrackingStatus;
 import com.designhubz.androidsdk.helper.Progress;
+import com.designhubz.androidsdk.helper.Recommendations;
 import com.designhubz.androidsdk.helper.RequestResponseTryon;
 import com.designhubz.androidsdk.helper.Variation;
+import com.designhubz.androidsdk.interfaces.OnEyewearFetchFitInfo;
+import com.designhubz.androidsdk.interfaces.OnEyewearRecommendation;
+import com.designhubz.androidsdk.interfaces.OnEyewearSendStat;
 import com.designhubz.androidsdk.interfaces.OnEyewearSwitchCallback;
 import com.designhubz.androidsdk.interfaces.OnStartEyewearRequestCallback;
 import com.designhubz.androidsdk.interfaces.OnEyewearScreenshotCallback;
@@ -62,9 +67,6 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
         designhubzVar.setListener(this);
 
         designhubzVar.initializeComponents(this);
-
-        designhubzVar.setEyewearSize(Eyewear.Size.Small);
-        designhubzVar.setEyewearFit(Eyewear.Fit.JustRight);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Please wait...");
@@ -286,10 +288,85 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
         ImageView ivScreenshotPreview = (ImageView) dialogLayout.findViewById(R.id.ivScreenshotPreview);
         float imageWidthInPX = (float)bitmap.getWidth();
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(Math.round(imageWidthInPX),
-                Math.round(imageWidthInPX * (float)bitmap.getHeight() / (float)bitmap.getWidth()));
-        ivScreenshotPreview.setLayoutParams(layoutParams);
+//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(Math.round(imageWidthInPX),
+//                Math.round(imageWidthInPX * (float)bitmap.getHeight() / (float)bitmap.getWidth()));
+//        ivScreenshotPreview.setLayoutParams(layoutParams);
         ivScreenshotPreview.setImageBitmap(bitmap);
         dialog.show();
+    }
+
+    /**
+     * fetchFit.
+     *
+     * @param view the view
+     */
+    public void fetchFit(View view) {
+        progressDialog.show();
+        /**
+         * fetchFitInfo
+         *
+         * Fetch fit info of eyewear
+         *
+         * @param OnEyewearFetchFitInfo override One callback methods
+         *        1. onResult callbacks receive two result i.e Eyewear Fit and Eyewear Size
+         */
+        designhubzVar.fetchFitInfo(new OnEyewearFetchFitInfo() {
+            @Override
+            public void onResult(Eyewear.Fit fit, Eyewear.Size size) {
+                // write your code to process or show fit info
+                Toast.makeText(VideoViewActivity.this, "FIT:-"+fit.getValue()+" SIZE:-"+size.getValue(), Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+    /**
+     * fetchRecommendation.
+     *
+     * @param view the view
+     */
+    public void fetchRecommendation(View view) {
+        progressDialog.show();
+        /**
+         * fetchRecommendations
+         *
+         * Fetch eyewear Recommendations
+         *
+         * @param noOfRecomendation the no of recommendations want to get
+         * @param OnEyewearRecommendation override One callback methods
+         *        1. onResult callbacks recommendation list
+         */
+        designhubzVar.fetchRecommendations(3,new OnEyewearRecommendation() {
+            @Override
+            public void onResult(List<Recommendations> recommendations) {
+                // write your code to process or show recommendations
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+    /**
+     * sendStat.
+     *
+     * @param view the view
+     */
+    public void sendStat(View view) {
+        progressDialog.show();
+        /**
+         * sendStat
+         *
+         * Send statistics To SDK
+         *
+         * @param Stat Pass enum of the stats it can be Whishlisted, AddedToCart, SnapshotSaved
+         * @param OnEyewearSendStat override One callback methods
+         *        1. onResult callbacks string result
+         */
+        designhubzVar.sendStat(Stat.Whishlisted,new OnEyewearSendStat() {
+            @Override
+            public void onResult(String result) {
+                // write your code to process or show result
+                progressDialog.dismiss();
+            }
+        });
     }
 }
