@@ -41,7 +41,7 @@ dependencies{
     /**
      * Step 2 : Add this android-sdk dependency
      */
-    implementation 'com.github.designhubz-org:android-sdk:1.2'
+    implementation 'com.github.designhubz-org:android-sdk:1.3'
 }
 ```
 
