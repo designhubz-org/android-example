@@ -68,9 +68,6 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
 
         designhubzVar.initializeComponents(this);
 
-        designhubzVar.setEyewearSize(Eyewear.Size.Small);
-        designhubzVar.setEyewearFit(Eyewear.Fit.JustRight);
-
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Please wait...");
         progressDialog.setCancelable(false);
@@ -311,7 +308,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          * Fetch fit info of eyewear
          *
          * @param OnEyewearFetchFitInfo override One callback methods
-         *        1. onResult callbacks string result
+         *        1. onResult callbacks receive two result i.e Eyewear Fit and Eyewear Size
          */
         designhubzVar.fetchFitInfo(new OnEyewearFetchFitInfo() {
             @Override
@@ -356,9 +353,9 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
     public void sendStat(View view) {
         progressDialog.show();
         /**
-         * fetchRecommendations
+         * sendStat
          *
-         * Fetch eyewear Recommendations
+         * Send statistics To SDK
          *
          * @param Stat Pass enum of the stats it can be Whishlisted, AddedToCart, SnapshotSaved
          * @param OnEyewearSendStat override One callback methods
