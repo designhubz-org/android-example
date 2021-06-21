@@ -36,6 +36,7 @@ import com.designhubz.androidsdk.interfaces.OnEyewearScreenshotCallback;
 import com.designhubz.androidsdk.interfaces.OnEyewearVariationCallback;
 import com.designhubz.androidsdk.interfaces.WebviewListener;
 import com.designhubzandroidexample.helper.Constant;
+import com.designhubzandroidexample.helper.LogHelper;
 
 import java.util.List;
 
@@ -108,7 +109,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
 
     @Override
     protected void onDestroy() {
-        designhubzVar.destroy();
+//        designhubzVar.destroy();
         super.onDestroy();
     }
 
@@ -162,22 +163,26 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          *        2. onProgressCallback callbacks progress update
          *        3. onTrackingCallback callbacks the status of eyewear tracking like Analyzing,Tracking,FaceNotFound,etc.
          */
+        new LogHelper().logText("VideoViewActivity","startEyewearTryon","StartMethodCall");
         designhubzVar.startEyewearTryon(Constant.mProduct.getId(),new OnStartEyewearRequestCallback() {
 
             @Override
             public void onResult(List<Variation> variations) {
                 // write your code to process or show variations
+                new LogHelper().logText("VideoViewActivity","startEyewearTryon","onResult--> Variations:-"+variations.size());
                 progressDialog.dismiss();
             }
 
             @Override
             public void onProgressCallback(Progress progress) {
                 // write your code to process or show progress
+                new LogHelper().logText("VideoViewActivity","startEyewearTryon","onProgressCallback-->:-"+progress.data);
             }
 
             @Override
             public void onTrackingCallback(TrackingStatus trackingStatus) {
                 // write your code to process or show tracking status
+                new LogHelper().logText("VideoViewActivity","startEyewearTryon","onTrackingCallback-->:-"+trackingStatus.getValue());
                 progressDialog.dismiss();
                 Toast.makeText(VideoViewActivity.this, ""+trackingStatus.getValue(), Toast.LENGTH_SHORT).show();
             }
@@ -201,16 +206,19 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          *        1. onResult callbacks eyewear variation list
          *        2. onProgressCallback callbacks progress update
          */
+        new LogHelper().logText("VideoViewActivity","LoadVariation","StartMethodCall");
         designhubzVar.loadVariation("MP000000007163139",new OnEyewearVariationCallback() {
             @Override
             public void onResult(List<Variation> variations) {
                 // write your code to process or show variations
+                new LogHelper().logText("VideoViewActivity","LoadVariation","onResult--> Variations:-"+variations.size());
                 progressDialog.dismiss();
             }
 
             @Override
             public void onProgressCallback(Progress progress) {
                 // write your code to process or show progress
+                new LogHelper().logText("VideoViewActivity","LoadVariation","onProgressCallback-->:-"+progress.data);
             }
         });
     }
@@ -231,16 +239,19 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          *        1. onResult callbacks string result
          *        2. onProgressCallback callbacks progress update
          */
+        new LogHelper().logText("VideoViewActivity","switchContext","StartMethodCall");
         designhubzVar.switchContext(new OnEyewearSwitchCallback() {
             @Override
             public void onResult(String result) {
                 // write your code to process or show result
+                new LogHelper().logText("VideoViewActivity","switchContext","onResult--> "+result);
                 progressDialog.dismiss();
             }
 
             @Override
             public void onProgressCallback(Progress progress) {
                 // write your code to process or show progress
+                new LogHelper().logText("VideoViewActivity","switchContext","onProgressCallback-->:-"+progress.data);
             }
         });
     }
@@ -260,11 +271,13 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          * @param OnEyewearScreenshotCallback override one callback methods
          *        1. onResult callbacks Bitmap image of tryon
          */
+        new LogHelper().logText("VideoViewActivity","screenshot","StartMethodCall");
         designhubzVar.takeScreenshot(new OnEyewearScreenshotCallback() {
             @Override
             public void onResult(Bitmap bitmap) {
                 progressDialog.dismiss();
                 // write your code to process or show image
+                new LogHelper().logText("VideoViewActivity","screenshot","onResult--> Bitmap");
                 showImageInDialog(bitmap);
             }
         });
@@ -310,10 +323,12 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          * @param OnEyewearFetchFitInfo override One callback methods
          *        1. onResult callbacks receive two result i.e Eyewear Fit and Eyewear Size
          */
+        new LogHelper().logText("VideoViewActivity","fetchFit","StartMethodCall");
         designhubzVar.fetchFitInfo(new OnEyewearFetchFitInfo() {
             @Override
             public void onResult(Eyewear.Fit fit, Eyewear.Size size) {
                 // write your code to process or show fit info
+                new LogHelper().logText("VideoViewActivity","fetchFit","onResult--> Fit:-"+fit.getValue()+"  Size:-"+size.getValue());
                 Toast.makeText(VideoViewActivity.this, "FIT:-"+fit.getValue()+" SIZE:-"+size.getValue(), Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
             }
@@ -336,10 +351,12 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          * @param OnEyewearRecommendation override One callback methods
          *        1. onResult callbacks recommendation list
          */
+        new LogHelper().logText("VideoViewActivity","fetchRecommendation","StartMethodCall");
         designhubzVar.fetchRecommendations(3,new OnEyewearRecommendation() {
             @Override
             public void onResult(List<Recommendations> recommendations) {
                 // write your code to process or show recommendations
+                new LogHelper().logText("VideoViewActivity","fetchRecommendation","onResult--> Recommendations:-"+recommendations.size());
                 progressDialog.dismiss();
             }
         });
@@ -361,10 +378,12 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          * @param OnEyewearSendStat override One callback methods
          *        1. onResult callbacks string result
          */
+        new LogHelper().logText("VideoViewActivity","sendStat","StartMethodCall");
         designhubzVar.sendStat(Stat.Whishlisted,new OnEyewearSendStat() {
             @Override
             public void onResult(String result) {
                 // write your code to process or show result
+                new LogHelper().logText("VideoViewActivity","sendStat","onResult--> "+result);
                 progressDialog.dismiss();
             }
         });
