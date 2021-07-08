@@ -18,6 +18,9 @@ allprojects {
         jcenter()/**
          * Step 1 : Add jitpack maven repository
          */
+        maven {
+            url "https://maven.mozilla.org/maven2/"
+        }
         maven { url "https://jitpack.io" }
     }
 }
