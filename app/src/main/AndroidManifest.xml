@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DesignhubzAndroidExample">
+        <activity android:name=".GeckoVideoViewActivity"></activity>
         <activity
             android:name=".VideoViewActivity"
             android:screenOrientation="portrait" />
