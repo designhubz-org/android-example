@@ -15,9 +15,10 @@ import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import com.designhubz.androidsdk.DesignhubzGeckoview;
+
 import com.designhubz.androidsdk.Permissions;
 import com.designhubz.androidsdk.api.enums.Eyewear;
 import com.designhubz.androidsdk.api.enums.Stat;
@@ -32,16 +33,17 @@ import com.designhubz.androidsdk.interfaces.OnEyewearSendStat;
 import com.designhubz.androidsdk.interfaces.OnEyewearSwitchCallback;
 import com.designhubz.androidsdk.interfaces.OnEyewearVariationCallback;
 import com.designhubz.androidsdk.interfaces.OnStartEyewearRequestCallback;
+
 import com.designhubz.androidsdk.interfaces.WebviewListener;
 import com.designhubzandroidexample.helper.Constant;
 import com.designhubzandroidexample.helper.LogHelper;
 
-
-
 import java.util.List;
 
 import static com.designhubz.androidsdk.helper.RequestCodes.REQUEST_CODE_PERMISSION;
-
+/**
+ * The type GeckoVideo view activity.
+ */
 public class GeckoVideoViewActivity extends AppCompatActivity implements WebviewListener {
 
     private DesignhubzGeckoview designhubzVar;
@@ -52,6 +54,7 @@ public class GeckoVideoViewActivity extends AppCompatActivity implements Webview
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gecko_video_view);
+
         main();
     }
 
@@ -61,6 +64,7 @@ public class GeckoVideoViewActivity extends AppCompatActivity implements Webview
         designhubzVar.initView(this);
 
         designhubzVar.setListener(this);
+
         designhubzVar.initializeComponents(this);
 
         progressDialog = new ProgressDialog(this);
@@ -92,20 +96,54 @@ public class GeckoVideoViewActivity extends AppCompatActivity implements Webview
         }
     }
 
+    /**
+     * On close.
+     *
+     * @param view the view
+     */
+    public void onClose(View view) {
+        onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+//        designhubzVar.destroy();
+        super.onDestroy();
+    }
+
+    /**
+     * On page started.
+     *
+     * @param s      the s
+     * @param bitmap the bitmap
+     */
     @Override
     public void onPageStarted(String url, Bitmap favicon) {
 
     }
 
+    /**
+     * On page finished.
+     *
+     * @param s the s
+     */
     @Override
     public void onPageFinished(String url) {
 
     }
 
+    /**
+     * On page error.
+     *
+     * @param i  the
+     * @param s  the s
+     * @param s1 the s 1
+     */
     @Override
-    public void onPageError(int errorCode, String description, String failingUrl) {
+    public void onPageError(nt i, String s, String s1) {
 
     }
+
     /**
      * Start eyewear.
      *
