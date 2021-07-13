@@ -140,7 +140,7 @@ public class GeckoVideoViewActivity extends AppCompatActivity implements Webview
      * @param s1 the s 1
      */
     @Override
-    public void onPageError(nt i, String s, String s1) {
+    public void onPageError(int i, String s, String s1) {
 
     }
 
