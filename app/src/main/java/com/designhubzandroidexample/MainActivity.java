@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClickItem(int adapterPosition) {
                 Constant.mProduct = productList.get(adapterPosition);
                 startActivity(new Intent(MainActivity.this, GeckoVideoViewActivity.class));
+                //startActivity(new Intent(MainActivity.this, VideoViewActivity.class));
             }
         };
         rcvProductList.setAdapter(productListAdapter);
