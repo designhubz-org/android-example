@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
 import com.designhubz.androidsdk.DesignhubzGeckoview;
 
 import com.designhubz.androidsdk.Permissions;
@@ -41,6 +42,7 @@ import com.designhubzandroidexample.helper.LogHelper;
 import java.util.List;
 
 import static com.designhubz.androidsdk.helper.RequestCodes.REQUEST_CODE_PERMISSION;
+
 /**
  * The type GeckoVideo view activity.
  */
@@ -162,28 +164,28 @@ public class GeckoVideoViewActivity extends AppCompatActivity implements Webview
          *        2. onProgressCallback callbacks progress update
          *        3. onTrackingCallback callbacks the status of eyewear tracking like Analyzing,Tracking,FaceNotFound,etc.
          */
-        new LogHelper().logText("VideoViewActivity","startEyewearTryon","StartMethodCall");
-        designhubzVar.startEyewearTryon(Constant.mProduct.getId(),new OnStartEyewearRequestCallback() {
+        new LogHelper().logText("VideoViewActivity", "startEyewearTryon", "StartMethodCall");
+        designhubzVar.startEyewearTryon(Constant.mProduct.getId(), new OnStartEyewearRequestCallback() {
 
             @Override
             public void onResult(List<Variation> variations) {
                 // write your code to process or show variations
-                new LogHelper().logText("VideoViewActivity","startEyewearTryon","onResult--> Variations:-"+variations.size());
+                new LogHelper().logText("VideoViewActivity", "startEyewearTryon", "onResult--> Variations:-" + variations.size());
                 progressDialog.dismiss();
             }
 
             @Override
             public void onProgressCallback(Progress progress) {
                 // write your code to process or show progress
-                new LogHelper().logText("VideoViewActivity","startEyewearTryon","onProgressCallback-->:-"+progress.data);
+                new LogHelper().logText("VideoViewActivity", "startEyewearTryon", "onProgressCallback-->:-" + progress.data);
             }
 
             @Override
             public void onTrackingCallback(TrackingStatus trackingStatus) {
                 // write your code to process or show tracking status
-                new LogHelper().logText("VideoViewActivity","startEyewearTryon","onTrackingCallback-->:-"+trackingStatus.getValue());
+                new LogHelper().logText("VideoViewActivity", "startEyewearTryon", "onTrackingCallback-->:-" + trackingStatus.getValue());
                 progressDialog.dismiss();
-                Toast.makeText(GeckoVideoViewActivity.this, ""+trackingStatus.getValue(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(GeckoVideoViewActivity.this, "" + trackingStatus.getValue(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -205,19 +207,19 @@ public class GeckoVideoViewActivity extends AppCompatActivity implements Webview
          *        1. onResult callbacks eyewear variation list
          *        2. onProgressCallback callbacks progress update
          */
-        new LogHelper().logText("VideoViewActivity","LoadVariation","StartMethodCall");
-        designhubzVar.loadVariation("MP000000007163139",new OnEyewearVariationCallback() {
+        new LogHelper().logText("VideoViewActivity", "LoadVariation", "StartMethodCall");
+        designhubzVar.loadVariation("MP000000007163139", new OnEyewearVariationCallback() {
             @Override
             public void onResult(List<Variation> variations) {
                 // write your code to process or show variations
-                new LogHelper().logText("VideoViewActivity","LoadVariation","onResult--> Variations:-"+variations.size());
+                new LogHelper().logText("VideoViewActivity", "LoadVariation", "onResult--> Variations:-" + variations.size());
                 progressDialog.dismiss();
             }
 
             @Override
             public void onProgressCallback(Progress progress) {
                 // write your code to process or show progress
-                new LogHelper().logText("VideoViewActivity","LoadVariation","onProgressCallback-->:-"+progress.data);
+                new LogHelper().logText("VideoViewActivity", "LoadVariation", "onProgressCallback-->:-" + progress.data);
             }
         });
     }
@@ -238,19 +240,19 @@ public class GeckoVideoViewActivity extends AppCompatActivity implements Webview
          *        1. onResult callbacks string result
          *        2. onProgressCallback callbacks progress update
          */
-        new LogHelper().logText("VideoViewActivity","switchContext","StartMethodCall");
+        new LogHelper().logText("VideoViewActivity", "switchContext", "StartMethodCall");
         designhubzVar.switchContext(new OnEyewearSwitchCallback() {
             @Override
             public void onResult(String result) {
                 // write your code to process or show result
-                new LogHelper().logText("VideoViewActivity","switchContext","onResult--> "+result);
+                new LogHelper().logText("VideoViewActivity", "switchContext", "onResult--> " + result);
                 progressDialog.dismiss();
             }
 
             @Override
             public void onProgressCallback(Progress progress) {
                 // write your code to process or show progress
-                new LogHelper().logText("VideoViewActivity","switchContext","onProgressCallback-->:-"+progress.data);
+                new LogHelper().logText("VideoViewActivity", "switchContext", "onProgressCallback-->:-" + progress.data);
             }
         });
     }
@@ -270,13 +272,13 @@ public class GeckoVideoViewActivity extends AppCompatActivity implements Webview
          * @param OnEyewearScreenshotCallback override one callback methods
          *        1. onResult callbacks Bitmap image of tryon
          */
-        new LogHelper().logText("VideoViewActivity","screenshot","StartMethodCall");
+        new LogHelper().logText("VideoViewActivity", "screenshot", "StartMethodCall");
         designhubzVar.takeScreenshot(new OnEyewearScreenshotCallback() {
             @Override
             public void onResult(Bitmap bitmap) {
                 progressDialog.dismiss();
                 // write your code to process or show image
-                new LogHelper().logText("VideoViewActivity","screenshot","onResult--> Bitmap");
+                new LogHelper().logText("VideoViewActivity", "screenshot", "onResult--> Bitmap");
                 showImageInDialog(bitmap);
             }
         });
@@ -298,7 +300,7 @@ public class GeckoVideoViewActivity extends AppCompatActivity implements Webview
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         ImageView ivScreenshotPreview = (ImageView) dialogLayout.findViewById(R.id.ivScreenshotPreview);
-        float imageWidthInPX = (float)bitmap.getWidth();
+        float imageWidthInPX = (float) bitmap.getWidth();
 
 //        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(Math.round(imageWidthInPX),
 //                Math.round(imageWidthInPX * (float)bitmap.getHeight() / (float)bitmap.getWidth()));
@@ -322,13 +324,13 @@ public class GeckoVideoViewActivity extends AppCompatActivity implements Webview
          * @param OnEyewearFetchFitInfo override One callback methods
          *        1. onResult callbacks receive two result i.e Eyewear Fit and Eyewear Size
          */
-        new LogHelper().logText("VideoViewActivity","fetchFit","StartMethodCall");
+        new LogHelper().logText("VideoViewActivity", "fetchFit", "StartMethodCall");
         designhubzVar.fetchFitInfo(new OnEyewearFetchFitInfo() {
             @Override
             public void onResult(Eyewear.Fit fit, Eyewear.Size size) {
                 // write your code to process or show fit info
-                new LogHelper().logText("VideoViewActivity","fetchFit","onResult--> Fit:-"+fit.getValue()+"  Size:-"+size.getValue());
-                Toast.makeText(GeckoVideoViewActivity.this, "FIT:-"+fit.getValue()+" SIZE:-"+size.getValue(), Toast.LENGTH_SHORT).show();
+                new LogHelper().logText("VideoViewActivity", "fetchFit", "onResult--> Fit:-" + fit.getValue() + "  Size:-" + size.getValue());
+                Toast.makeText(GeckoVideoViewActivity.this, "FIT:-" + fit.getValue() + " SIZE:-" + size.getValue(), Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
             }
         });
@@ -350,12 +352,12 @@ public class GeckoVideoViewActivity extends AppCompatActivity implements Webview
          * @param OnEyewearRecommendation override One callback methods
          *        1. onResult callbacks recommendation list
          */
-        new LogHelper().logText("VideoViewActivity","fetchRecommendation","StartMethodCall");
-        designhubzVar.fetchRecommendations(3,new OnEyewearRecommendation() {
+        new LogHelper().logText("VideoViewActivity", "fetchRecommendation", "StartMethodCall");
+        designhubzVar.fetchRecommendations(3, new OnEyewearRecommendation() {
             @Override
             public void onResult(List<Recommendations> recommendations) {
                 // write your code to process or show recommendations
-                new LogHelper().logText("VideoViewActivity","fetchRecommendation","onResult--> Recommendations:-"+recommendations.size());
+                new LogHelper().logText("VideoViewActivity", "fetchRecommendation", "onResult--> Recommendations:-" + recommendations.size());
                 progressDialog.dismiss();
             }
         });
@@ -377,12 +379,12 @@ public class GeckoVideoViewActivity extends AppCompatActivity implements Webview
          * @param OnEyewearSendStat override One callback methods
          *        1. onResult callbacks string result
          */
-        new LogHelper().logText("VideoViewActivity","sendStat","StartMethodCall");
-        designhubzVar.sendStat(Stat.Whishlisted,new OnEyewearSendStat() {
+        new LogHelper().logText("VideoViewActivity", "sendStat", "StartMethodCall");
+        designhubzVar.sendStat(Stat.Whishlisted, new OnEyewearSendStat() {
             @Override
             public void onResult(String result) {
                 // write your code to process or show result
-                new LogHelper().logText("VideoViewActivity","sendStat","onResult--> "+result);
+                new LogHelper().logText("VideoViewActivity", "sendStat", "onResult--> " + result);
                 progressDialog.dismiss();
             }
         });
