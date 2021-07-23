@@ -27,10 +27,12 @@ import com.designhubz.androidsdk.helper.Progress;
 import com.designhubz.androidsdk.helper.Recommendations;
 import com.designhubz.androidsdk.helper.RequestResponseTryon;
 import com.designhubz.androidsdk.helper.Variation;
+import com.designhubz.androidsdk.interfaces.OnEyewearDispose;
 import com.designhubz.androidsdk.interfaces.OnEyewearFetchFitInfo;
 import com.designhubz.androidsdk.interfaces.OnEyewearRecommendation;
 import com.designhubz.androidsdk.interfaces.OnEyewearSendStat;
 import com.designhubz.androidsdk.interfaces.OnEyewearSwitchCallback;
+import com.designhubz.androidsdk.interfaces.OnSendID;
 import com.designhubz.androidsdk.interfaces.OnStartEyewearRequestCallback;
 import com.designhubz.androidsdk.interfaces.OnEyewearScreenshotCallback;
 import com.designhubz.androidsdk.interfaces.OnEyewearVariationCallback;
@@ -109,7 +111,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
 
     @Override
     protected void onDestroy() {
-//        designhubzVar.destroy();
+        designhubzVar.destroy();
         super.onDestroy();
     }
 
@@ -374,7 +376,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          *
          * Send statistics To SDK
          *
-         * @param Stat Pass enum of the stats it can be Whishlisted, AddedToCart, SnapshotSaved
+         * @param Stat Pass enum of the stats it can be Whishlisted, AddedToCart, SnapshotSaved,SharedToSocialMedia
          * @param OnEyewearSendStat override One callback methods
          *        1. onResult callbacks string result
          */
@@ -384,6 +386,58 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
             public void onResult(String result) {
                 // write your code to process or show result
                 new LogHelper().logText("VideoViewActivity","sendStat","onResult--> "+result);
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+    /**
+     * sendUserID.
+     *
+     * @param view the view
+     */
+    public void sendUserID(View view) {
+        progressDialog.show();
+        /**
+         * sendUserID
+         *
+         * Send user ID To SDK
+         *
+         * @param OnSendID override One callback methods
+         *        1. onResult callbacks string result
+         */
+        new LogHelper().logText("VideoViewActivity","sendUserID","StartMethodCall");
+        designhubzVar.sendUserID(new OnSendID() {
+            @Override
+            public void onResult(String result) {
+                // write your code to process or show result
+                new LogHelper().logText("VideoViewActivity","sendUserID","onResult--> "+result);
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+    /**
+     * DisposeWidget.
+     *
+     * @param view the view
+     */
+    public void disposeWidget(View view) {
+        progressDialog.show();
+        /**
+         * DisposeWidget
+         *
+         * To dispose widget
+         *
+         * @param OnEyewearDispose override One callback methods
+         *        1. onResult callbacks string result
+         */
+        new LogHelper().logText("VideoViewActivity","disposeWidget","StartMethodCall");
+        designhubzVar.disposeWidget(new OnEyewearDispose() {
+            @Override
+            public void onResult(String result) {
+                // write your code to process or show result
+                new LogHelper().logText("VideoViewActivity","disposeWidget","onResult--> "+result);
                 progressDialog.dismiss();
             }
         });
