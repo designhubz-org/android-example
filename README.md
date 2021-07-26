@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 50) {
             if (Permissions.checkPermission(this)) {
-                DesignhubzWebview.initializeComponents(this);
+                switchContext(null);
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
                 builder.setTitle("Permission Denied")
@@ -297,7 +297,7 @@ designhubzVar.fetchRecommendations(<"pass here number of recommandation">,new On
 });
 
 ```
-- To Send statistics To SDK (Stats can be: Whishlisted, AddedToCart, SnapshotSaved):
+- To Send statistics To SDK (Stats can be: Whishlisted, AddedToCart, SnapshotSaved,SharedToSocialMedia):
 
 ```java
 progressDialog.show();
@@ -306,11 +306,53 @@ progressDialog.show();
 *
 * Send statistics To SDK
 *
-* @param Stat Pass enum of the stats it can be Whishlisted, AddedToCart, SnapshotSaved
+* @param Stat Pass enum of the stats it can be Whishlisted, AddedToCart, SnapshotSaved,SharedToSocialMedia
 * @param OnEyewearSendStat override One callback methods
 *        1. onResult callbacks string result
 */
 designhubzVar.sendStat(Stat.Whishlisted,new OnEyewearSendStat() {
+    @Override
+    public void onResult(String result) {
+        // write your code to process or show result
+        progressDialog.dismiss();
+    }
+});
+
+```
+- To Send userID To SDK:
+
+```java
+progressDialog.show();
+/**
+* sendUserID
+*
+* Send user ID To SDK
+*
+* @param OnSendID override One callback methods
+*        1. onResult callbacks string result
+*/
+designhubzVar.sendUserID(new OnSendID() {
+    @Override
+    public void onResult(String result) {
+        // write your code to process or show result
+        progressDialog.dismiss();
+    }
+});
+
+```
+- To Send request to dispose widget To SDK:
+
+```java
+progressDialog.show();
+/**
+* DisposeWidget
+*
+* To dispose widget
+*
+* @param OnEyewearDispose override One callback methods
+*        1. onResult callbacks string result
+*/
+designhubzVar.disposeWidget(new OnEyewearDispose() {
     @Override
     public void onResult(String result) {
         // write your code to process or show result
