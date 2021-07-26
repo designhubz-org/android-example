@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 50) {
             if (Permissions.checkPermission(this)) {
-                DesignhubzWebview.initializeComponents(this);
+                switchContext(null);
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
                 builder.setTitle("Permission Denied")

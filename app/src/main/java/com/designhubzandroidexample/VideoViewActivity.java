@@ -83,7 +83,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_PERMISSION) {
             if (Permissions.checkPermission(this)) {
-                designhubzVar.initializeComponents(this);
+                switchContext(null);
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
                 builder.setTitle("Permission Denied")
