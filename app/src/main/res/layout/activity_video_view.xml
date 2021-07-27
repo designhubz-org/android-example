@@ -166,6 +166,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:text="Dispose"
+                android:visibility="gone"
                 android:layout_weight="1"
                 android:onClick="disposeWidget"
                 android:id="@+id/btDispose"/>
