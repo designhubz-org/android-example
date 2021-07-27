@@ -402,12 +402,12 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          * sendUserID
          *
          * Send user ID To SDK
-         *
+         *@param UserID
          * @param OnSendID override One callback methods
          *        1. onResult callbacks string result
          */
         new LogHelper().logText("VideoViewActivity","sendUserID","StartMethodCall");
-        designhubzVar.sendUserID(new OnSendID() {
+        designhubzVar.sendUserID("0001",new OnSendID() {
             @Override
             public void onResult(String result) {
                 // write your code to process or show result
