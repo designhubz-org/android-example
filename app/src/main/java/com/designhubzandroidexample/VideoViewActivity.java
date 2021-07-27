@@ -111,11 +111,6 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
 
     @Override
     protected void onDestroy() {
-        designhubzVar.disposeWidget(new OnEyewearDispose() {
-            @Override
-            public void onResult(String result) {
-            }
-        });
         designhubzVar.destroy();
         super.onDestroy();
     }
