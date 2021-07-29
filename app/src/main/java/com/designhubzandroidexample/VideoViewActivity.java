@@ -50,7 +50,7 @@ import static com.designhubz.androidsdk.helper.RequestCodes.REQUEST_CODE_PERMISS
 public class VideoViewActivity extends AppCompatActivity implements WebviewListener {
 
     private DesignhubzWebview designhubzVar;
-    private FrameLayout flRoot;
+    private LinearLayout flRoot;
     private ProgressDialog progressDialog;
 
     @Override
@@ -411,6 +411,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
             @Override
             public void onResult(String result) {
                 // write your code to process or show result
+//                ((LinearLayout)findViewById(R.id.lyOtherOptions)).setVisibility(View.VISIBLE);
                 new LogHelper().logText("VideoViewActivity","sendUserID","onResult--> "+result);
                 progressDialog.dismiss();
             }

@@ -139,6 +139,29 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
 DesignhubzWebview.initializeComponents(this);
 ```
 
+- To Send userID To SDK:
+    - Before the start eyewear tryon need to send UserID to SDK then after other methods will be called.
+
+```java
+progressDialog.show();
+/**
+* sendUserID
+*
+* Send user ID To SDK
+*
+* @param UserID 
+* @param OnSendID override One callback methods
+*        1. onResult callbacks string result
+*/
+designhubzVar.sendUserID("0001",new OnSendID() {
+    @Override
+    public void onResult(String result) {
+        // write your code to process or show result
+        progressDialog.dismiss();
+    }
+});
+
+```
 
 - To start the eyewear try-on widget:
 
@@ -311,28 +334,6 @@ progressDialog.show();
 *        1. onResult callbacks string result
 */
 designhubzVar.sendStat(Stat.Whishlisted,new OnEyewearSendStat() {
-    @Override
-    public void onResult(String result) {
-        // write your code to process or show result
-        progressDialog.dismiss();
-    }
-});
-
-```
-- To Send userID To SDK:
-
-```java
-progressDialog.show();
-/**
-* sendUserID
-*
-* Send user ID To SDK
-*
-* @param UserID 
-* @param OnSendID override One callback methods
-*        1. onResult callbacks string result
-*/
-designhubzVar.sendUserID("0001",new OnSendID() {
     @Override
     public void onResult(String result) {
         // write your code to process or show result
