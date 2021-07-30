@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,7 +14,8 @@
         android:textColor="#F44336"
         android:textStyle="bold"
         android:textSize="13sp"
-        android:text="Before the start eyewear tryon, Mandatory to set UserID"
+        android:paddingHorizontal="5dp"
+        android:text="The user should call sendUserId as soon as they receive the result from the startEyewearTryon method."
         android:gravity="center"/>
 
     <FrameLayout
@@ -107,37 +107,31 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
-                    android:text="Send User ID"
+                    android:id="@+id/btCamera"
                     android:layout_weight="1"
-                    android:onClick="sendUserID"
-                    android:id="@+id/btSendUserID"/>
+                    android:onClick="StartEyewear"
+                    android:text="Start Eyewear" />
 
-                <LinearLayout
-                    android:id="@+id/lyOtherOptions"
+                <Button
+                    android:id="@+id/btSendUserID"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="visible"
-                    android:orientation="horizontal">
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    android:onClick="sendUserID"
+                    android:text="Send User ID" />
 
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
-                        android:text="Start Eyewear"
-                        android:layout_weight="1"
-                        android:onClick="StartEyewear"
-                        android:id="@+id/btCamera"/>
+                <Button
+                    android:id="@+id/btLoadVariation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_weight="1"
+                    android:onClick="LoadVariation"
+                    android:text="Load Variation" />
 
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
-                        android:text="Load Variation"
-                        android:layout_weight="1"
-                        android:onClick="LoadVariation"
-                        android:id="@+id/btLoadVariation"/>
-
-                    <Button
+                <Button
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="16dp"
@@ -192,7 +186,6 @@
                         android:onClick="disposeWidget"
                         android:id="@+id/btDispose"/>
                 </LinearLayout>
-            </LinearLayout>
         </HorizontalScrollView>
     </FrameLayout>
 

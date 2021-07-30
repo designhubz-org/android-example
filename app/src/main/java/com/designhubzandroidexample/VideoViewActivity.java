@@ -173,6 +173,9 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
                 // write your code to process or show variations
                 new LogHelper().logText("VideoViewActivity","startEyewearTryon","onResult--> Variations:-"+variations.size());
                 progressDialog.dismiss();
+
+                //Send UserID to SDK
+                sendUserID(null);
             }
 
             @Override

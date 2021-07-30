@@ -139,29 +139,7 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
 DesignhubzWebview.initializeComponents(this);
 ```
 
-- To Send userID To SDK:
-    - Before the start eyewear tryon need to send UserID to SDK then after other methods will be called.
 
-```java
-progressDialog.show();
-/**
-* sendUserID
-*
-* Send user ID To SDK
-*
-* @param UserID 
-* @param OnSendID override One callback methods
-*        1. onResult callbacks string result
-*/
-designhubzVar.sendUserID("0001",new OnSendID() {
-    @Override
-    public void onResult(String result) {
-        // write your code to process or show result
-        progressDialog.dismiss();
-    }
-});
-
-```
 
 - To start the eyewear try-on widget:
 
@@ -185,6 +163,10 @@ designhubzVar.startEyewearTryon("MP000000006870126",new OnStartEyewearRequestCal
       public void onResult(List<Variation> variations) {
           // write your code to process or show variations
           progressDialog.dismiss();
+            
+          //Send UserID to SDK
+          sendUserID();
+
       }
 
       @Override
@@ -199,6 +181,32 @@ designhubzVar.startEyewearTryon("MP000000006870126",new OnStartEyewearRequestCal
           Toast.makeText(VideoViewActivity.this, ""+trackingStatus.getValue(), Toast.LENGTH_SHORT).show();
       }
 });
+```
+
+- To Send userID To SDK:
+    - The user should call sendUserId as soon as they receive the result from the startEyewearTryon method.
+
+```java
+    public void sendUserID() {
+        progressDialog.show();
+        /**
+        * sendUserID
+        *
+        * Send user ID To SDK
+        *
+        * @param UserID 
+        * @param OnSendID override One callback methods
+        *        1. onResult callbacks string result
+        */
+        designhubzVar.sendUserID("0001",new OnSendID() {
+            @Override
+            public void onResult(String result) {
+                // write your code to process or show result
+                progressDialog.dismiss();
+            }
+        });  
+    }
+
 ```
 
 - To  load another variation:
