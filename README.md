@@ -140,6 +140,7 @@ DesignhubzWebview.initializeComponents(this);
 ```
 
 
+
 - To start the eyewear try-on widget:
 
 ```java
@@ -162,6 +163,10 @@ designhubzVar.startEyewearTryon("MP000000006870126",new OnStartEyewearRequestCal
       public void onResult(List<Variation> variations) {
           // write your code to process or show variations
           progressDialog.dismiss();
+            
+          //Send UserID to SDK
+          sendUserID();
+
       }
 
       @Override
@@ -176,6 +181,32 @@ designhubzVar.startEyewearTryon("MP000000006870126",new OnStartEyewearRequestCal
           Toast.makeText(VideoViewActivity.this, ""+trackingStatus.getValue(), Toast.LENGTH_SHORT).show();
       }
 });
+```
+
+- To Send userID To SDK:
+    - The user should call sendUserId as soon as they receive the result from the startEyewearTryon method.
+
+```java
+    public void sendUserID() {
+        progressDialog.show();
+        /**
+        * sendUserID
+        *
+        * Send user ID To SDK
+        *
+        * @param UserID 
+        * @param OnSendID override One callback methods
+        *        1. onResult callbacks string result
+        */
+        designhubzVar.sendUserID("0001",new OnSendID() {
+            @Override
+            public void onResult(String result) {
+                // write your code to process or show result
+                progressDialog.dismiss();
+            }
+        });  
+    }
+
 ```
 
 - To  load another variation:
@@ -311,28 +342,6 @@ progressDialog.show();
 *        1. onResult callbacks string result
 */
 designhubzVar.sendStat(Stat.Whishlisted,new OnEyewearSendStat() {
-    @Override
-    public void onResult(String result) {
-        // write your code to process or show result
-        progressDialog.dismiss();
-    }
-});
-
-```
-- To Send userID To SDK:
-
-```java
-progressDialog.show();
-/**
-* sendUserID
-*
-* Send user ID To SDK
-*
-* @param UserID 
-* @param OnSendID override One callback methods
-*        1. onResult callbacks string result
-*/
-designhubzVar.sendUserID("0001",new OnSendID() {
     @Override
     public void onResult(String result) {
         // write your code to process or show result
