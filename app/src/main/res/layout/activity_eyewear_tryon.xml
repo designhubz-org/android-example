@@ -6,12 +6,12 @@
     xmlns:Eyewear="http://schemas.android.com/apk/res-auto"
     android:id="@+id/flRoot"
     android:orientation="vertical"
-    tools:context=".VideoViewActivity">
+    tools:context=".EyewearTryonActivity">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:textColor="#F44336"
+        android:textColor="@color/warning_red"
         android:textStyle="bold"
         android:textSize="13sp"
         android:paddingHorizontal="5dp"
@@ -34,8 +34,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
+            android:layout_marginTop="10dp"
+            android:paddingVertical="4dp"
+            android:paddingHorizontal="8dp"
+            android:orientation="horizontal"
+            android:background="@color/background_black_translucent">
 
             <RelativeLayout
                 android:layout_width="match_parent"

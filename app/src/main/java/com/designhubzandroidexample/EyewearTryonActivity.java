@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -20,24 +19,23 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.designhubz.androidsdk.DesignhubzWebview;
 import com.designhubz.androidsdk.Permissions;
+import com.designhubz.androidsdk.api.Product;
 import com.designhubz.androidsdk.api.enums.Eyewear;
 import com.designhubz.androidsdk.api.enums.Stat;
 import com.designhubz.androidsdk.api.enums.TrackingStatus;
 import com.designhubz.androidsdk.helper.Progress;
 import com.designhubz.androidsdk.helper.Recommendations;
-import com.designhubz.androidsdk.helper.RequestResponseTryon;
 import com.designhubz.androidsdk.helper.Variation;
-import com.designhubz.androidsdk.interfaces.OnEyewearDispose;
+import com.designhubz.androidsdk.interfaces.OnDispose;
 import com.designhubz.androidsdk.interfaces.OnEyewearFetchFitInfo;
-import com.designhubz.androidsdk.interfaces.OnEyewearRecommendation;
-import com.designhubz.androidsdk.interfaces.OnEyewearSendStat;
 import com.designhubz.androidsdk.interfaces.OnEyewearSwitchCallback;
+import com.designhubz.androidsdk.interfaces.OnRecommendation;
+import com.designhubz.androidsdk.interfaces.OnScreenshotCallback;
 import com.designhubz.androidsdk.interfaces.OnSendID;
+import com.designhubz.androidsdk.interfaces.OnSendStat;
 import com.designhubz.androidsdk.interfaces.OnStartEyewearRequestCallback;
-import com.designhubz.androidsdk.interfaces.OnEyewearScreenshotCallback;
-import com.designhubz.androidsdk.interfaces.OnEyewearVariationCallback;
+import com.designhubz.androidsdk.interfaces.OnVariationCallback;
 import com.designhubz.androidsdk.interfaces.WebviewListener;
-import com.designhubzandroidexample.helper.Constant;
 import com.designhubzandroidexample.helper.LogHelper;
 
 import java.util.List;
@@ -45,18 +43,22 @@ import java.util.List;
 import static com.designhubz.androidsdk.helper.RequestCodes.REQUEST_CODE_PERMISSION;
 
 /**
- * The type Video view activity.
+ * The type Eyewear Tryon activity.
  */
-public class VideoViewActivity extends AppCompatActivity implements WebviewListener {
+public class EyewearTryonActivity extends AppCompatActivity implements WebviewListener {
 
     private DesignhubzWebview designhubzVar;
     private LinearLayout flRoot;
     private ProgressDialog progressDialog;
+    private Product mProduct = new Product("MP000000006870126","Fastrack",
+            "Fastrack P254678D Green Anti-Reflactive Sunglasses", 2300, 3000);
+    private List<Variation> exampleVariations;
+    private static int variationNumber = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_view);
+        setContentView(R.layout.activity_eyewear_tryon);
 
         main();
     }
@@ -85,7 +87,7 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
             if (Permissions.checkPermission(this)) {
                 switchContext(null);
             } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(EyewearTryonActivity.this);
                 builder.setTitle("Permission Denied")
                         .setMessage("Please allow permission to proceed.")
                         .setCancelable(false)
@@ -165,31 +167,39 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          *        2. onProgressCallback callbacks progress update
          *        3. onTrackingCallback callbacks the status of eyewear tracking like Analyzing,Tracking,FaceNotFound,etc.
          */
-        new LogHelper().logText("VideoViewActivity","startEyewearTryon","StartMethodCall");
-        designhubzVar.startEyewearTryon(Constant.mProduct.getId(),new OnStartEyewearRequestCallback() {
+        new LogHelper().logText("EyewearTryonActivity","startEyewearTryon","StartMethodCall");
+        designhubzVar.startEyewearTryon(mProduct.getId(),new OnStartEyewearRequestCallback() {
 
             @Override
             public void onResult(List<Variation> variations) {
                 // write your code to process or show variations
-                new LogHelper().logText("VideoViewActivity","startEyewearTryon","onResult--> Variations:-"+variations.size());
+                //Storing the retrieved list of variations
+                exampleVariations = variations;
+                new LogHelper().logText("EyewearTryonActivity","startEyewearTryon","onResult--> Variations:-"+variations.size());
                 progressDialog.dismiss();
 
                 //Send UserID to SDK
-                sendUserID(null);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        sendUserID(null);
+                    }
+                });
+
             }
 
             @Override
             public void onProgressCallback(Progress progress) {
                 // write your code to process or show progress
-                new LogHelper().logText("VideoViewActivity","startEyewearTryon","onProgressCallback-->:-"+progress.data);
+                new LogHelper().logText("EyewearTryonActivity","startEyewearTryon","onProgressCallback-->:-"+progress.data);
             }
 
             @Override
             public void onTrackingCallback(TrackingStatus trackingStatus) {
                 // write your code to process or show tracking status
-                new LogHelper().logText("VideoViewActivity","startEyewearTryon","onTrackingCallback-->:-"+trackingStatus.getValue());
+                new LogHelper().logText("EyewearTryonActivity","startEyewearTryon","onTrackingCallback-->:-"+trackingStatus.getValue());
                 progressDialog.dismiss();
-                Toast.makeText(VideoViewActivity.this, ""+trackingStatus.getValue(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(EyewearTryonActivity.this, ""+trackingStatus.getValue(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -211,19 +221,29 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          *        1. onResult callbacks eyewear variation list
          *        2. onProgressCallback callbacks progress update
          */
-        new LogHelper().logText("VideoViewActivity","LoadVariation","StartMethodCall");
-        designhubzVar.loadVariation("MP000000007163139",new OnEyewearVariationCallback() {
+        new LogHelper().logText("EyewearTryonActivity","LoadVariation","StartMethodCall");
+
+        //Getting variation id from the variations retrieved from StartMakeup one by one
+        String variationId = "";
+        if (variationNumber < exampleVariations.size()) {
+            variationNumber = variationNumber < exampleVariations.size() - 1 ? variationNumber + 1 : 0;
+        } else {
+            variationNumber = 0;
+        }
+        variationId = exampleVariations.get(variationNumber).getProductKey();
+
+        designhubzVar.loadVariation(variationId,new OnVariationCallback() {
             @Override
             public void onResult(List<Variation> variations) {
                 // write your code to process or show variations
-                new LogHelper().logText("VideoViewActivity","LoadVariation","onResult--> Variations:-"+variations.size());
+                new LogHelper().logText("EyewearTryonActivity","LoadVariation","onResult--> Variations:-"+variations.size());
                 progressDialog.dismiss();
             }
 
             @Override
             public void onProgressCallback(Progress progress) {
                 // write your code to process or show progress
-                new LogHelper().logText("VideoViewActivity","LoadVariation","onProgressCallback-->:-"+progress.data);
+                new LogHelper().logText("EyewearTryonActivity","LoadVariation","onProgressCallback-->:-"+progress.data);
             }
         });
     }
@@ -244,19 +264,19 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          *        1. onResult callbacks string result
          *        2. onProgressCallback callbacks progress update
          */
-        new LogHelper().logText("VideoViewActivity","switchContext","StartMethodCall");
+        new LogHelper().logText("EyewearTryonActivity","switchContext","StartMethodCall");
         designhubzVar.switchContext(new OnEyewearSwitchCallback() {
             @Override
             public void onResult(String result) {
                 // write your code to process or show result
-                new LogHelper().logText("VideoViewActivity","switchContext","onResult--> "+result);
+                new LogHelper().logText("EyewearTryonActivity","switchContext","onResult--> "+result);
                 progressDialog.dismiss();
             }
 
             @Override
             public void onProgressCallback(Progress progress) {
                 // write your code to process or show progress
-                new LogHelper().logText("VideoViewActivity","switchContext","onProgressCallback-->:-"+progress.data);
+                new LogHelper().logText("EyewearTryonActivity","switchContext","onProgressCallback-->:-"+progress.data);
             }
         });
     }
@@ -276,20 +296,20 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          * @param OnEyewearScreenshotCallback override one callback methods
          *        1. onResult callbacks Bitmap image of tryon
          */
-        new LogHelper().logText("VideoViewActivity","screenshot","StartMethodCall");
-        designhubzVar.takeScreenshot(new OnEyewearScreenshotCallback() {
+        new LogHelper().logText("EyewearTryonActivity","screenshot","StartMethodCall");
+        designhubzVar.takeScreenshot(new OnScreenshotCallback() {
             @Override
             public void onResult(Bitmap bitmap) {
                 progressDialog.dismiss();
                 // write your code to process or show image
-                new LogHelper().logText("VideoViewActivity","screenshot","onResult--> Bitmap");
+                new LogHelper().logText("EyewearTryonActivity","screenshot","onResult--> Bitmap");
                 showImageInDialog(bitmap);
             }
         });
     }
 
     private void showImageInDialog(Bitmap bitmap) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(VideoViewActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(EyewearTryonActivity.this);
         builder.setTitle("DesignHubzSDK");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
@@ -328,13 +348,13 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          * @param OnEyewearFetchFitInfo override One callback methods
          *        1. onResult callbacks receive two result i.e Eyewear Fit and Eyewear Size
          */
-        new LogHelper().logText("VideoViewActivity","fetchFit","StartMethodCall");
+        new LogHelper().logText("EyewearTryonActivity","fetchFit","StartMethodCall");
         designhubzVar.fetchFitInfo(new OnEyewearFetchFitInfo() {
             @Override
             public void onResult(Eyewear.Fit fit, Eyewear.Size size) {
                 // write your code to process or show fit info
-                new LogHelper().logText("VideoViewActivity","fetchFit","onResult--> Fit:-"+fit.getValue()+"  Size:-"+size.getValue());
-                Toast.makeText(VideoViewActivity.this, "FIT:-"+fit.getValue()+" SIZE:-"+size.getValue(), Toast.LENGTH_SHORT).show();
+                new LogHelper().logText("EyewearTryonActivity","fetchFit","onResult--> Fit:-"+fit.getValue()+"  Size:-"+size.getValue());
+                Toast.makeText(EyewearTryonActivity.this, "FIT:-"+fit.getValue()+" SIZE:-"+size.getValue(), Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
             }
         });
@@ -356,12 +376,12 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          * @param OnEyewearRecommendation override One callback methods
          *        1. onResult callbacks recommendation list
          */
-        new LogHelper().logText("VideoViewActivity","fetchRecommendation","StartMethodCall");
-        designhubzVar.fetchRecommendations(3,new OnEyewearRecommendation() {
+        new LogHelper().logText("EyewearTryonActivity","fetchRecommendation","StartMethodCall");
+        designhubzVar.fetchRecommendations(3,new OnRecommendation() {
             @Override
             public void onResult(List<Recommendations> recommendations) {
                 // write your code to process or show recommendations
-                new LogHelper().logText("VideoViewActivity","fetchRecommendation","onResult--> Recommendations:-"+recommendations.size());
+                new LogHelper().logText("EyewearTryonActivity","fetchRecommendation","onResult--> Recommendations:-"+recommendations.size());
                 progressDialog.dismiss();
             }
         });
@@ -383,12 +403,12 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          * @param OnEyewearSendStat override One callback methods
          *        1. onResult callbacks string result
          */
-        new LogHelper().logText("VideoViewActivity","sendStat","StartMethodCall");
-        designhubzVar.sendStat(Stat.Whishlisted,new OnEyewearSendStat() {
+        new LogHelper().logText("EyewearTryonActivity","sendStat","StartMethodCall");
+        designhubzVar.sendStat(Stat.Whishlisted,new OnSendStat() {
             @Override
             public void onResult(String result) {
                 // write your code to process or show result
-                new LogHelper().logText("VideoViewActivity","sendStat","onResult--> "+result);
+                new LogHelper().logText("EyewearTryonActivity","sendStat","onResult--> "+result);
                 progressDialog.dismiss();
             }
         });
@@ -409,13 +429,13 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          * @param OnSendID override One callback methods
          *        1. onResult callbacks string result
          */
-        new LogHelper().logText("VideoViewActivity","sendUserID","StartMethodCall");
+        new LogHelper().logText("EyewearTryonActivity","sendUserID","StartMethodCall");
         designhubzVar.sendUserID("0001",new OnSendID() {
             @Override
             public void onResult(String result) {
                 // write your code to process or show result
 //                ((LinearLayout)findViewById(R.id.lyOtherOptions)).setVisibility(View.VISIBLE);
-                new LogHelper().logText("VideoViewActivity","sendUserID","onResult--> "+result);
+                new LogHelper().logText("EyewearTryonActivity","sendUserID","onResult--> "+result);
                 progressDialog.dismiss();
             }
         });
@@ -436,12 +456,12 @@ public class VideoViewActivity extends AppCompatActivity implements WebviewListe
          * @param OnEyewearDispose override One callback methods
          *        1. onResult callbacks string result
          */
-        new LogHelper().logText("VideoViewActivity","disposeWidget","StartMethodCall");
-        designhubzVar.disposeWidget(new OnEyewearDispose() {
+        new LogHelper().logText("EyewearTryonActivity","disposeWidget","StartMethodCall");
+        designhubzVar.disposeWidget(new OnDispose() {
             @Override
             public void onResult(String result) {
                 // write your code to process or show result
-                new LogHelper().logText("VideoViewActivity","disposeWidget","onResult--> "+result);
+                new LogHelper().logText("EyewearTryonActivity","disposeWidget","onResult--> "+result);
                 progressDialog.dismiss();
             }
         });

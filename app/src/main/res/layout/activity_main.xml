@@ -15,11 +15,20 @@
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcvProductList"
+    <Button
         android:layout_width="match_parent"
-        android:layout_marginHorizontal="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:id="@+id/btnStartEyewearTryon"
+        android:onClick="StartEyewearTryon"
+        android:text="Start Eyewear Tryon" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:id="@+id/btnStartMakeupTryon"
+        android:onClick="StartMakeupTryon"
+        android:text="Start Makeup Tryon" />
 
 </LinearLayout>
