@@ -31,4 +31,26 @@
         android:onClick="StartMakeupTryon"
         android:text="Start Makeup Tryon" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="8dp"
+        android:weightSum="1"
+        android:gravity="bottom"
+        android:paddingVertical="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:text="Enable Debug" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/swDebug"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.75"
+            android:text=""/>
+    </LinearLayout>
+
 </LinearLayout>

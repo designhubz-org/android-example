@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:Eyewear="http://schemas.android.com/apk/res-auto"
     android:id="@+id/flRoot"
     android:orientation="vertical"
     tools:context=".MakeupTryonActivity">
@@ -15,7 +14,7 @@
         android:textStyle="bold"
         android:textSize="13sp"
         android:paddingHorizontal="5dp"
-        android:text="The user should call sendUserId as soon as they receive the result from the startEyewearTryon method."
+        android:text="The user should call sendUserId as soon as they receive the result from the startMakeupTryon method."
         android:gravity="center"/>
 
     <FrameLayout
@@ -26,10 +25,17 @@
             android:id="@+id/wvCamera"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            Eyewear:Fit="JustRight"
-            Eyewear:Size="Medium"
-            android:layout_marginBottom="60dp"
             />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvAvailableRAM"
+            android:textColor="@color/warning_red"
+            android:text="Getting Available RAM"
+            android:layout_marginTop="100dp"
+            android:visibility="gone"
+            android:layout_marginHorizontal="16dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"

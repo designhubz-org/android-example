@@ -10,8 +10,8 @@ android {
         applicationId "com.designhubzandroidexample"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 2
-        versionName "1.1"
+        versionCode 3
+        versionName "1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -48,5 +48,5 @@ dependencies {
     /**
      * Step 2 : Add this android-sdk dependency
      */
-    implementation 'com.github.designhubz-org:android-sdk:2.0'
+    implementation 'com.github.designhubz-org:android-sdk:2.1'
 }

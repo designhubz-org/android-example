@@ -3,15 +3,18 @@ package com.designhubzandroidexample;
 import static com.designhubz.androidsdk.helper.RequestCodes.REQUEST_CODE_PERMISSION;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,8 +38,12 @@ import com.designhubz.androidsdk.interfaces.OnSendStat;
 import com.designhubz.androidsdk.interfaces.OnStartMakeupRequestCallback;
 import com.designhubz.androidsdk.interfaces.OnVariationCallback;
 import com.designhubz.androidsdk.interfaces.WebviewListener;
+import com.designhubzandroidexample.helper.DebugMessage;
 import com.designhubzandroidexample.helper.LogHelper;
+import com.designhubzandroidexample.helper.Memory;
+import com.designhubzandroidexample.helper.PreferencesManager;
 
+import java.util.Date;
 import java.util.List;
 
 public class MakeupTryonActivity extends AppCompatActivity implements WebviewListener {
@@ -47,6 +54,9 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
     private final String exampleMakeupId = "MP000000008737118";
     private List<Variation> exampleVariations;
     private static int variationNumber = 0;
+    private static long startTime = 0;
+    private Context context;
+    private TextView tvAvailableRAM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +67,7 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
     }
 
     private void main() {
+        context = MakeupTryonActivity.this;
         flRoot = findViewById(R.id.flRoot);
         designhubzVar = findViewById(R.id.wvCamera);
 
@@ -69,6 +80,22 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Please wait...");
         progressDialog.setCancelable(false);
+
+        tvAvailableRAM = findViewById(R.id.tvAvailableRAM);
+
+        //Debug available Memory
+        if(new PreferencesManager(context).getEnableDebug()) {
+            tvAvailableRAM.setVisibility(View.VISIBLE);
+            final Handler handler = new Handler();
+            final int delay = 1000; // 1000 milliseconds == 1 second
+
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    tvAvailableRAM.setText("Available RAM: "+ Memory.getAvailableRAM(context)+" MB");
+                    handler.postDelayed(this, delay);
+                }
+            }, delay);
+        }
 
     }
 
@@ -101,6 +128,7 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
      * @param view the view
      */
     public void StartMakeup(View view) {
+        startTime = new Date().getTime();
         progressDialog.show();
         /**
          * startMakeupTryon
@@ -123,7 +151,7 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
                 exampleVariations = variations;
                 new LogHelper().logText("MakeupTryonActivity", "startMakeupTryon", "onResult--> Variations:-" + exampleVariations.size());
                 progressDialog.dismiss();
-
+                DebugMessage.print(context, "Load Time Makeup TryOn: " + ((new Date().getTime() - startTime) / 1000f) + " s");
 
                 //Send UserID to SDK
                 runOnUiThread(new Runnable() {
