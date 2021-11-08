@@ -31,6 +31,7 @@ import com.designhubz.androidsdk.helper.Progress;
 import com.designhubz.androidsdk.helper.Recommendations;
 import com.designhubz.androidsdk.helper.Variation;
 import com.designhubz.androidsdk.interfaces.OnDispose;
+import com.designhubz.androidsdk.interfaces.OnDoubleScreenshotCallback;
 import com.designhubz.androidsdk.interfaces.OnRecommendation;
 import com.designhubz.androidsdk.interfaces.OnScreenshotCallback;
 import com.designhubz.androidsdk.interfaces.OnSendID;
@@ -252,6 +253,33 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
         });
     }
 
+    /**
+     * Double Screenshot.
+     *
+     * @param view the view
+     */
+    public void doubleScreenshot(View view) {
+        progressDialog.show();
+        /**
+         * takeDoubleScreenshot
+         *
+         * Take screenshots of Makeup Try-on with and without Makeup
+         *
+         * @param OnDoubleScreenshotCallback override one callback methods
+         *        1. onResult callbacks Bitmap image of with and without the tryon
+         */
+        new LogHelper().logText("MakeupTryonActivity", "doubleScreenshot", "StartMethodCall");
+        designhubzVar.takeDoubleScreenshot(new OnDoubleScreenshotCallback() {
+            @Override
+            public void onResult(Bitmap originalSnapshot, Bitmap snapshot) {
+                progressDialog.dismiss();
+                // write your code to process or show image
+                new LogHelper().logText("MakeupTryonActivity", "doubleScreenshot", "onResult--> Bitmap");
+                showDoubleImageInDialog(originalSnapshot,snapshot);
+            }
+        });
+    }
+
     private void showImageInDialog(Bitmap bitmap) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MakeupTryonActivity.this);
         builder.setTitle("DesignHubzSDK");
@@ -269,6 +297,28 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
 
         ImageView ivScreenshotPreview = (ImageView) dialogLayout.findViewById(R.id.ivScreenshotPreview);
         ivScreenshotPreview.setImageBitmap(bitmap);
+        dialog.show();
+    }
+
+    private void showDoubleImageInDialog(Bitmap originalSnapshot, Bitmap snapshot) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MakeupTryonActivity.this);
+        builder.setTitle("DesignHubzSDK");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogLayout = inflater.inflate(R.layout.double_image_preview_dialog, null);
+        dialog.setView(dialogLayout);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        ImageView ivOriginalPreview = (ImageView) dialogLayout.findViewById(R.id.ivOriginalPreview);
+        ivOriginalPreview.setImageBitmap(originalSnapshot);
+        ImageView ivMakeupSnapshot = (ImageView) dialogLayout.findViewById(R.id.ivMakeupPreview);
+        ivMakeupSnapshot.setImageBitmap(snapshot);
         dialog.show();
     }
 
