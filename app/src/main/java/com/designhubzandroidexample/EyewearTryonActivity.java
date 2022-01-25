@@ -417,10 +417,42 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
             @Override
             public void onResult(List<Recommendations> recommendations) {
                 // write your code to process or show recommendations
-                new LogHelper().logText("EyewearTryonActivity", "fetchRecommendation", "onResult--> Recommendations:-" + recommendations.size());
+                new LogHelper().logText("EyewearTryonActivity", "fetchRecommendation",
+                        "onResult--> Number of Recommendations:-" + recommendations.size());
+                if(recommendations.size()>0){
+                    displayRecommendations(recommendations);
+                }
                 progressDialog.dismiss();
             }
         });
+    }
+
+    /**
+     * displayRecommendations
+     *
+     * @param recommendations list of recommendations
+     */
+    private void displayRecommendations(List<Recommendations> recommendations) {
+        StringBuilder strBuilder = new StringBuilder();
+        strBuilder.append("Product Key => Score");
+        strBuilder.append("\n");
+        strBuilder.append("\n");
+        for(int i=0; i< recommendations.size();i++) {
+            strBuilder.append(recommendations.get(i).getProductKey());
+            strBuilder.append(" => ");
+            strBuilder.append(recommendations.get(i).getScore());
+            strBuilder.append("\n");
+            strBuilder.append("\n");
+        }
+        new AlertDialog.Builder(context)
+                .setTitle("Recommendations")
+                .setMessage(strBuilder.toString())
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     /**

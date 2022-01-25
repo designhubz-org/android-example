@@ -183,6 +183,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
+                    android:text="Fetch Recommendation"
+                    android:layout_weight="1"
+                    android:onClick="fetchRecommendation"
+                    android:id="@+id/btfetchRecommendation"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:text="Live Compare"
+                    android:layout_weight="1"
+                    android:onClick="liveCompare"
+                    android:id="@+id/btLiveCompare"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
                     android:text="Dispose"
                     android:visibility="gone"
                     android:layout_weight="1"

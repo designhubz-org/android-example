@@ -335,7 +335,7 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
          * Fetch eyewear Recommendations
          *
          * @param noOfRecomendation the no of recommendations want to get
-         * @param OnEyewearRecommendation override One callback methods
+         * @param OnRecommendation override One callback methods
          *        1. onResult callbacks recommendation list
          */
         new LogHelper().logText("MakeupTryonActivity", "fetchRecommendation", "StartMethodCall");
@@ -343,10 +343,42 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
             @Override
             public void onResult(List<Recommendations> recommendations) {
                 // write your code to process or show recommendations
-                new LogHelper().logText("MakeupTryonActivity", "fetchRecommendation", "onResult--> Recommendations:-" + recommendations.size());
+                new LogHelper().logText("MakeupTryonActivity", "fetchRecommendation",
+                        "onResult--> Number of Recommendations:-" + recommendations.size());
+                if(recommendations.size()>0){
+                    displayRecommendations(recommendations);
+                }
                 progressDialog.dismiss();
             }
         });
+    }
+
+    /**
+     * displayRecommendations
+     *
+     * @param recommendations list of recommendations
+     */
+    private void displayRecommendations(List<Recommendations> recommendations) {
+        StringBuilder strBuilder = new StringBuilder();
+        strBuilder.append("Product Key => Score");
+        strBuilder.append("\n");
+        strBuilder.append("\n");
+        for(int i=0; i< recommendations.size();i++) {
+            strBuilder.append(recommendations.get(i).getProductKey());
+            strBuilder.append(" => ");
+            strBuilder.append(recommendations.get(i).getScore());
+            strBuilder.append("\n");
+            strBuilder.append("\n");
+        }
+        new AlertDialog.Builder(context)
+                .setTitle("Recommendations")
+                .setMessage(strBuilder.toString())
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     /**
@@ -401,6 +433,21 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
                 progressDialog.dismiss();
             }
         });
+    }
+
+    /**
+     * live compare.
+     *
+     * @param view the view
+     */
+    public void liveCompare(View view) {
+        /**
+         * liveCompare
+         *
+         * Start live compare for make-up try on
+         */
+        new LogHelper().logText("MakeupTryonActivity", "liveCompare", "StartMethodCall");
+        designhubzVar.liveCompare();
     }
 
     /**
