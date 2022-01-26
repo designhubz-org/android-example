@@ -306,26 +306,37 @@ designhubzVar.fetchFitInfo(new OnEyewearFetchFitInfo() {
 });
 
 ```
-- To Fetch recommendations (pass number of recommendations needed):
+- To Fetch recommendations for Eyewear and Makeup(pass number of recommendations needed):
 
 ```java
 progressDialog.show();
 /**
 * fetchRecommendations
 *
-* Fetch eyewear Recommendations
+* Fetch eyewear and makeup Recommendations
 *
 * @param noOfRecomendation the no of recommendations want to get
-* @param OnEyewearRecommendation override One callback methods
+* @param OnRecommendation override One callback methods
 *        1. onResult callbacks recommendation list
 */
-designhubzVar.fetchRecommendations(<"pass here number of recommandation">,new OnEyewearRecommendation() {
+designhubzVar.fetchRecommendations(<"pass here number of recommandation">,new OnRecommendation() {
     @Override
     public void onResult(List<Recommendations> recommendations) {
         // write your code to process or show recommendations
         progressDialog.dismiss();
     }
 });
+
+```
+- To start live comparison for Makeup:
+
+```java
+/**
+* liveCompare
+*
+* Start live compare for make-up try on
+*/
+designhubzVar.liveCompare();
 
 ```
 - To Send statistics To SDK (Stats can be: Whishlisted, AddedToCart, SnapshotSaved,SharedToSocialMedia):
