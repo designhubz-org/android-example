@@ -334,7 +334,7 @@ designhubzVar.fetchRecommendations(<"pass here number of recommandation">,new On
 });
 
 ```
-- To start live comparison for Makeup:
+- [beta] To start live comparison for Makeup:
 
 ```java
 /**
