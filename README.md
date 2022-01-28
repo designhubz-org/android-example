@@ -1,3 +1,9 @@
+At **Designhubz** we empower brands around the world to connect with shoppers in a complete immersive way.
+
+We’re transforming the online shopping experience with next generation eCommerce interfaces using our leading AR technology that’s being adopted by some of the largest brands and retailers globally.
+
+---
+
 ## designhubz Android Example
 [![Platform](https://img.shields.io/badge/platform-android-green.svg)](http://developer.android.com/index.html)
 [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=7)
