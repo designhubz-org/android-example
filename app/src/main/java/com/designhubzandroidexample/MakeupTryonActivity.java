@@ -447,7 +447,7 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
          * Start live compare for make-up try on
          */
         new LogHelper().logText("MakeupTryonActivity", "liveCompare", "StartMethodCall");
-        designhubzVar.liveCompare();
+        designhubzVar.liveCompare(0.5);
     }
 
     /**

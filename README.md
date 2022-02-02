@@ -47,7 +47,9 @@ dependencies{
     /**
      * Step 2 : Add this android-sdk dependency
      */
-    implementation 'com.github.designhubz-org:android-sdk:2.3'
+
+    implementation 'com.github.designhubz-org:android-sdk:2.4'
+
 }
 ```
 
@@ -190,7 +192,7 @@ designhubzVar.startEyewearTryon("MP000000006870126",new OnStartEyewearRequestCal
 ```
 
 - To Send userID To SDK:
-    - The user should call sendUserId as soon as they receive the result from the startEyewearTryon method.
+  - The user should call sendUserId as soon as they receive the result from the startEyewearTryon method.
 
 ```java
     public void sendUserID() {
@@ -341,8 +343,11 @@ designhubzVar.fetchRecommendations(<"pass here number of recommandation">,new On
 * liveCompare
 *
 * Start live compare for make-up try on
+* 
+* @param horizontalRatio Control product's horizontal augmentation area. Normalized value [0, 1] with 0 being fully visible and 1 fully hidden
 */
-designhubzVar.liveCompare();
+designhubzVar.liveCompare(0.5);
+
 
 ```
 - To Send statistics To SDK (Stats can be: Whishlisted, AddedToCart, SnapshotSaved,SharedToSocialMedia):
