@@ -1,3 +1,9 @@
+At **Designhubz** we empower brands around the world to connect with shoppers in a complete immersive way.
+
+We’re transforming the online shopping experience with next generation eCommerce interfaces using our leading AR technology that’s being adopted by some of the largest brands and retailers globally.
+
+---
+
 ## designhubz Android Example
 [![Platform](https://img.shields.io/badge/platform-android-green.svg)](http://developer.android.com/index.html)
 [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=7)
@@ -41,7 +47,7 @@ dependencies{
     /**
      * Step 2 : Add this android-sdk dependency
      */
-    implementation 'com.github.designhubz-org:android-sdk:1.4'
+    implementation 'com.github.designhubz-org:android-sdk:2.4'
 }
 ```
 
@@ -184,7 +190,7 @@ designhubzVar.startEyewearTryon("MP000000006870126",new OnStartEyewearRequestCal
 ```
 
 - To Send userID To SDK:
-    - The user should call sendUserId as soon as they receive the result from the startEyewearTryon method.
+  - The user should call sendUserId as soon as they receive the result from the startEyewearTryon method.
 
 ```java
     public void sendUserID() {
@@ -306,26 +312,39 @@ designhubzVar.fetchFitInfo(new OnEyewearFetchFitInfo() {
 });
 
 ```
-- To Fetch recommendations (pass number of recommendations needed):
+- To Fetch recommendations for Eyewear and Makeup(pass number of recommendations needed):
 
 ```java
 progressDialog.show();
 /**
 * fetchRecommendations
 *
-* Fetch eyewear Recommendations
+* Fetch eyewear and makeup Recommendations
 *
 * @param noOfRecomendation the no of recommendations want to get
-* @param OnEyewearRecommendation override One callback methods
+* @param OnRecommendation override One callback methods
 *        1. onResult callbacks recommendation list
 */
-designhubzVar.fetchRecommendations(<"pass here number of recommandation">,new OnEyewearRecommendation() {
+designhubzVar.fetchRecommendations(<"pass here number of recommandation">,new OnRecommendation() {
     @Override
     public void onResult(List<Recommendations> recommendations) {
         // write your code to process or show recommendations
         progressDialog.dismiss();
     }
 });
+
+```
+- [beta] To start live comparison for Makeup:
+
+```java
+/**
+* liveCompare
+*
+* Start live compare for make-up try on
+* 
+* @param horizontalRatio Control product's horizontal augmentation area. Normalized value [0, 1] with 0 being fully visible and 1 fully hidden
+*/
+designhubzVar.liveCompare(0.5);
 
 ```
 - To Send statistics To SDK (Stats can be: Whishlisted, AddedToCart, SnapshotSaved,SharedToSocialMedia):
