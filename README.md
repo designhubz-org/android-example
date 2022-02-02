@@ -47,7 +47,9 @@ dependencies{
     /**
      * Step 2 : Add this android-sdk dependency
      */
+
     implementation 'com.github.designhubz-org:android-sdk:2.4'
+
 }
 ```
 
@@ -345,6 +347,7 @@ designhubzVar.fetchRecommendations(<"pass here number of recommandation">,new On
 * @param horizontalRatio Control product's horizontal augmentation area. Normalized value [0, 1] with 0 being fully visible and 1 fully hidden
 */
 designhubzVar.liveCompare(0.5);
+
 
 ```
 - To Send statistics To SDK (Stats can be: Whishlisted, AddedToCart, SnapshotSaved,SharedToSocialMedia):
