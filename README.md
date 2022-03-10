@@ -104,8 +104,9 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
 
         //Register webview client listener here
         designhubzVar.setListener(this);
-
+        
         designhubzVar.initializeComponents(this);
+
     }
 
     /**
@@ -159,22 +160,18 @@ progressDialog.show();
  *
  * Load eyewear widget of given eyewear id
  *
- * @param eyewearID the eyewear id
+ * @param userId the user id
  * @param onStartEyewearRequestCallback override three callback methods
- *        1. onResult callbacks eyewear variation list
+ *        1. onResult callbacks completion
  *        2. onProgressCallback callbacks progress update
  *        3. onTrackingCallback callbacks the status of eyewear tracking like Analyzing,Tracking,FaceNotFound,etc.
  */
 
-designhubzVar.startEyewearTryon("MP000000006870126",new OnStartEyewearRequestCallback() {
+designhubzVar.startEyewearTryon("<userId>",new OnStartEyewearRequestCallback() {
       @Override
-      public void onResult(List<Variation> variations) {
-          // write your code to process or show variations
+      public void onResult() {
+          // write your code to show result
           progressDialog.dismiss();
-            
-          //Send UserID to SDK
-          sendUserID();
-
       }
 
       @Override
@@ -191,59 +188,28 @@ designhubzVar.startEyewearTryon("MP000000006870126",new OnStartEyewearRequestCal
 });
 ```
 
-- To Send userID To SDK:
-  - The user should call sendUserId as soon as they receive the result from the startEyewearTryon method.
+- Loading a Product:
 
 ```java
-    public void sendUserID() {
-        progressDialog.show();
-        /**
-        * sendUserID
-        *
-        * Send user ID To SDK
-        *
-        * @param UserID 
-        * @param OnSendID override One callback methods
-        *        1. onResult callbacks string result
-        */
-        designhubzVar.sendUserID("0001",new OnSendID() {
-            @Override
-            public void onResult(String result) {
-                // write your code to process or show result
-                progressDialog.dismiss();
-            }
-        });  
-    }
+designhubzVar.loadProduct("<ProductId>", new OnLoadProductCallback() {
 
-```
+@Override
+public void onResult() {
+        // write code to display result
+        }
 
-- To  load another variation:
+@Override
+public void onProgressCallback(Progress progress) {
+        // write code to diplay progress
+        }
 
-```java
-progressDialog.show();
-/**
- * loadVariation
- *
- * Load eyewear widget variation of passed eyewear variation id
- *
- * @param eyewearID the eyewear id
- * @param OnEyewearVariationCallback override two callback methods
- *        1. onResult callbacks eyewear variation list
- *        2. onProgressCallback callbacks progress update
- */
-designhubzVar.loadVariation("MP000000007163139",new OnEyewearVariationCallback() {
-      @Override
-      public void onResult(List<Variation> variations) {
-          // write your code to process or show variations
-          progressDialog.dismiss();
-      }
-
-      @Override
-      public void onProgressCallback(Progress progress) {
-          // write your code to process or show progress
-      }
+@Override
+public void onErrorCallback(String errorMessage) {
+        // write code to display error
+        }
 });
 ```
+
 - To switch context (toggle between 3D/Tryon):
 
 ```java

@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:Eyewear="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/flRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:Eyewear="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/flRoot"
     android:orientation="vertical"
     tools:context=".EyewearTryonActivity">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:textColor="@color/warning_red"
-        android:textStyle="bold"
-        android:textSize="13sp"
-        android:paddingHorizontal="5dp"
-        android:text="The user should call sendUserId as soon as they receive the result from the startEyewearTryon method."
-        android:gravity="center"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -27,28 +18,27 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             Eyewear:Fit="JustRight"
-            Eyewear:Size="Medium"
-            />
+            Eyewear:Size="Medium" />
 
         <TextView
+            android:id="@+id/tvAvailableRAM"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tvAvailableRAM"
-            android:textColor="@color/warning_red"
-            android:text="Getting Available RAM"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="100dp"
-            android:visibility="gone"
-            android:layout_marginHorizontal="16dp"/>
+            android:text="Getting Available RAM"
+            android:textColor="@color/warning_red"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:layout_marginTop="10dp"
-            android:paddingVertical="4dp"
-            android:paddingHorizontal="8dp"
+            android:background="@color/background_black_translucent"
             android:orientation="horizontal"
-            android:background="@color/background_black_translucent">
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -106,99 +96,121 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/llLabel"
+            android:orientation="vertical"
+            android:background="@color/background_black_translucent"
+            android:layout_gravity="top"
+            android:layout_marginTop="60dp"
+            android:layout_marginHorizontal="8dp"
+            android:visibility="gone"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvTestLabel"
+                android:text="Running Test"
+                android:paddingVertical="8dp"
+                android:textColor="@color/white"
+                android:gravity="center"/>
+
+        </LinearLayout>
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_gravity="bottom">
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="8dp">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/btTestAll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
+                    android:layout_weight="1"
+                    android:onClick="TestAll"
+                    android:text="Test All" />
+
+                <Button
                     android:id="@+id/btCamera"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
                     android:layout_weight="1"
                     android:onClick="StartEyewear"
                     android:text="Start Eyewear" />
 
                 <Button
-                    android:id="@+id/btSendUserID"
+                    android:id="@+id/btLoadProduct"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:layout_weight="1"
-                    android:visibility="gone"
-                    android:onClick="sendUserID"
-                    android:text="Send User ID" />
+                    android:onClick="LoadProduct"
+                    android:text="Load Product" />
+
 
                 <Button
-                    android:id="@+id/btLoadVariation"
+                    android:id="@+id/btgetProduct"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:layout_weight="1"
-                    android:onClick="LoadVariation"
-                    android:text="Load Variation" />
+                    android:onClick="switchContext"
+                    android:text="Switch Context" />
 
                 <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
-                        android:text="Switch Context"
-                        android:layout_weight="1"
-                        android:onClick="switchContext"
-                        android:id="@+id/btgetProduct"/>
+                    android:id="@+id/btfetchfit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_weight="1"
+                    android:onClick="fetchFit"
+                    android:text="Fetch Fit" />
 
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
-                        android:text="Fetch Fit"
-                        android:layout_weight="1"
-                        android:onClick="fetchFit"
-                        android:id="@+id/btfetchfit"/>
+                <Button
+                    android:id="@+id/btfetchRecommendation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_weight="1"
+                    android:onClick="fetchRecommendation"
+                    android:text="Fetch Recommendation" />
 
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
-                        android:text="Fetch Recommendation"
-                        android:layout_weight="1"
-                        android:onClick="fetchRecommendation"
-                        android:id="@+id/btfetchRecommendation"/>
+                <Button
+                    android:id="@+id/btSendStat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_weight="1"
+                    android:onClick="sendStat"
+                    android:text="Send Stat" />
 
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
-                        android:text="Send Stat"
-                        android:layout_weight="1"
-                        android:onClick="sendStat"
-                        android:id="@+id/btSendStat"/>
+                <Button
+                    android:id="@+id/btScreenshot"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_weight="1"
+                    android:onClick="screenshot"
+                    android:text="Take Screenshot" />
 
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
-                        android:text="Take Screenshot"
-                        android:layout_weight="1"
-                        android:onClick="screenshot"
-                        android:id="@+id/btScreenshot"/>
-
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
-                        android:text="Dispose"
-                        android:visibility="gone"
-                        android:layout_weight="1"
-                        android:onClick="disposeWidget"
-                        android:id="@+id/btDispose"/>
-                </LinearLayout>
+                <Button
+                    android:id="@+id/btDispose"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_weight="1"
+                    android:onClick="disposeWidget"
+                    android:text="Dispose"
+                    android:visibility="gone" />
+            </LinearLayout>
         </HorizontalScrollView>
     </FrameLayout>
 

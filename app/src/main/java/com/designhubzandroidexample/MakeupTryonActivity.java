@@ -3,12 +3,16 @@ package com.designhubzandroidexample;
 import static com.designhubz.androidsdk.helper.RequestCodes.REQUEST_CODE_PERMISSION;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -32,6 +36,7 @@ import com.designhubz.androidsdk.helper.Recommendations;
 import com.designhubz.androidsdk.helper.Variation;
 import com.designhubz.androidsdk.interfaces.OnDispose;
 import com.designhubz.androidsdk.interfaces.OnDoubleScreenshotCallback;
+import com.designhubz.androidsdk.interfaces.OnLoadProductCallback;
 import com.designhubz.androidsdk.interfaces.OnRecommendation;
 import com.designhubz.androidsdk.interfaces.OnScreenshotCallback;
 import com.designhubz.androidsdk.interfaces.OnSendID;
@@ -53,12 +58,12 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
     private LinearLayout flRoot;
     private ProgressDialog progressDialog;
     private final String exampleMakeupId = "MP000000008737118";
-    private List<Variation> exampleVariations;
-    private static int variationNumber = 0;
     private static long startTime = 0;
     private Context context;
-    private TextView tvAvailableRAM;
-
+    private TextView tvAvailableRAM, tvTestLabel;
+    private BroadcastReceiver mReceiverStartTest;
+    private IntentFilter mIntentFilterStartTest;
+    private LinearLayout llLabel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,20 +88,61 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
         progressDialog.setCancelable(false);
 
         tvAvailableRAM = findViewById(R.id.tvAvailableRAM);
+        tvTestLabel = findViewById(R.id.tvTestLabel);
+
+        llLabel = findViewById(R.id.llLabel);
 
         //Debug available Memory
-        if(new PreferencesManager(context).getEnableDebug()) {
+        if (new PreferencesManager(context).getEnableDebug()) {
             tvAvailableRAM.setVisibility(View.VISIBLE);
             final Handler handler = new Handler();
             final int delay = 1000; // 1000 milliseconds == 1 second
 
             handler.postDelayed(new Runnable() {
                 public void run() {
-                    tvAvailableRAM.setText("Available RAM: "+ Memory.getAvailableRAM(context)+" MB");
+                    tvAvailableRAM.setText("Available RAM: " + Memory.getAvailableRAM(context) + " MB");
                     handler.postDelayed(this, delay);
                 }
             }, delay);
         }
+
+        //BroadcastReceiver to start test
+        mReceiverStartTest = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String test = intent.getStringExtra("test");
+                Log.e("StartReceiver", "START_METHOD: "+test);
+
+                switch (test) {
+                    case "loadProduct":
+                        tvTestLabel.setText("Running loadProduct");
+                        LoadProduct(null);
+                        break;
+                    case "fetchRecommendations":
+                        tvTestLabel.setText("Running fetchRecommendations");
+                        fetchRecommendation(null);
+                        break;
+                    case "sendStat":
+                        tvTestLabel.setText("Running sendStat");
+                        sendStat(null);
+                        break;
+                    case "takeScreenshot":
+                        tvTestLabel.setText("Running takeScreenshot");
+                        screenshot(null);
+                        break;
+                    case "takeDoubleScreenshot":
+                        tvTestLabel.setText("Running takeDoubleScreenshot");
+                        doubleScreenshot(null);
+                        break;
+                    case "liveCompare":
+                        tvTestLabel.setText("Running liveCompare");
+                        liveCompare(null);
+                        break;
+                }
+            }
+        };
+
+        mIntentFilterStartTest = new IntentFilter("START_TEST");
 
     }
 
@@ -143,25 +189,18 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
          *        3. onTrackingCallback callbacks the status of eyewear tracking like Analyzing,Tracking,FaceNotFound,etc.
          */
         new LogHelper().logText("MakeupTryonActivity", "startMakeupTryon", "StartMethodCall");
-        designhubzVar.startMakeuptryon(exampleMakeupId, new OnStartMakeupRequestCallback() {
+        designhubzVar.startMakeuptryon("user12345", new OnStartMakeupRequestCallback() {
 
             @Override
-            public void onResult(List<Variation> variations) {
-                // write your code to process or show variations
-                //Storing the retrieved list of variations
-                exampleVariations = variations;
-                new LogHelper().logText("MakeupTryonActivity", "startMakeupTryon", "onResult--> Variations:-" + exampleVariations.size());
+            public void onResult() {
                 progressDialog.dismiss();
                 DebugMessage.print(context, "Load Time Makeup TryOn: " + ((new Date().getTime() - startTime) / 1000f) + " s");
 
-                //Send UserID to SDK
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        sendUserID(null);
-                    }
-                });
-
+                //Run all tests if receiver is registered
+                Intent broadcast = new Intent();
+                broadcast.setAction("START_TEST");
+                broadcast.putExtra("test", "loadProduct");
+                sendBroadcast(broadcast);
             }
 
             @Override
@@ -177,50 +216,69 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
                 progressDialog.dismiss();
                 Toast.makeText(MakeupTryonActivity.this, "" + trackingStatus.getValue(), Toast.LENGTH_SHORT).show();
             }
+
+            @Override
+            public void onErrorCallback(String errorMessage) {
+                progressDialog.dismiss();
+                Toast.makeText(MakeupTryonActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+            }
         });
 
     }
 
     /**
-     * Load variation.
+     * Load Product.
      *
      * @param view the view
      */
-    public void LoadVariation(View view) {
+    public void LoadProduct(View view) {
+        startTime = new Date().getTime();
         progressDialog.show();
         /**
-         * loadVariation
+         * loadProduct
          *
-         * Load eyewear widget variation of passed eyewear variation id
+         * Load product with productId
          *
-         * @param eyewearID the eyewear id
-         * @param OnEyewearVariationCallback override two callback methods
-         *        1. onResult callbacks eyewear variation list
+         * @param productId the makeup id
+         * @param OnLoadProductCallback override three callback methods
+         *        1. onResult callbacks completion
          *        2. onProgressCallback callbacks progress update
+         *        3. onErrorCallback callbacks error
          */
-        new LogHelper().logText("MakeupTryonActivity", "LoadVariation", "StartMethodCall");
-        
-        //Getting variation id from the variations retrieved from StartMakeup one by one
-        String variationId = "";
-        if (variationNumber < exampleVariations.size()) {
-            variationNumber = variationNumber < exampleVariations.size() - 1 ? variationNumber + 1 : 0;
-        } else {
-            variationNumber = 0;
-        }
-        variationId = exampleVariations.get(variationNumber).getProductKey();
-        
-        designhubzVar.loadVariation(variationId, new OnVariationCallback() {
+        new LogHelper().logText("EyewearTryonActivity", "loadProduct", "StartMethodCall");
+        designhubzVar.loadProduct(exampleMakeupId, new OnLoadProductCallback() {
+
             @Override
-            public void onResult(List<Variation> variations) {
+            public void onResult() {
                 // write your code to process or show variations
-                new LogHelper().logText("MakeupTryonActivity", "LoadVariation", "onResult--> Variations:-" + variations.size());
+                //Storing the retrieved list of variations
                 progressDialog.dismiss();
+                DebugMessage.print(context, "Load Time: " + ((new Date().getTime() - startTime) / 1000f) + " s");
+
+                //Run all tests if receiver is registered
+                Intent broadcast = new Intent();
+                broadcast.setAction("START_TEST");
+                broadcast.putExtra("test", "sendStat");
+                sendBroadcast(broadcast);
+
             }
 
             @Override
             public void onProgressCallback(Progress progress) {
                 // write your code to process or show progress
-                new LogHelper().logText("MakeupTryonActivity", "LoadVariation", "onProgressCallback-->:-" + progress.data);
+                new LogHelper().logText("EyewearTryonActivity", "loadProduct", "onProgressCallback-->:-" + progress.data);
+            }
+
+            @Override
+            public void onErrorCallback(String errorMessage) {
+                progressDialog.dismiss();
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+
+                //Run all tests if receiver is registered
+                Intent broadcast = new Intent();
+                broadcast.setAction("START_TEST");
+                broadcast.putExtra("test", "sendStat");
+                sendBroadcast(broadcast);
             }
         });
     }
@@ -250,6 +308,12 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
                 new LogHelper().logText("MakeupTryonActivity", "screenshot", "onResult--> Bitmap");
                 showImageInDialog(bitmap);
             }
+
+            @Override
+            public void onErrorCallback(String errorMessage) {
+                progressDialog.dismiss();
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+            }
         });
     }
 
@@ -275,7 +339,13 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
                 progressDialog.dismiss();
                 // write your code to process or show image
                 new LogHelper().logText("MakeupTryonActivity", "doubleScreenshot", "onResult--> Bitmap");
-                showDoubleImageInDialog(originalSnapshot,snapshot);
+                showDoubleImageInDialog(originalSnapshot, snapshot);
+            }
+
+            @Override
+            public void onErrorCallback(String errorMessage) {
+                progressDialog.dismiss();
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -286,6 +356,11 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                //Run all tests if receiver is registered
+                Intent broadcast = new Intent();
+                broadcast.setAction("START_TEST");
+                broadcast.putExtra("test", "takeDoubleScreenshot");
+                sendBroadcast(broadcast);
                 dialog.dismiss();
             }
         });
@@ -306,6 +381,11 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                //Run all tests if receiver is registered
+                Intent broadcast = new Intent();
+                broadcast.setAction("START_TEST");
+                broadcast.putExtra("test", "fetchRecommendations");
+                sendBroadcast(broadcast);
                 dialog.dismiss();
             }
         });
@@ -345,10 +425,15 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
                 // write your code to process or show recommendations
                 new LogHelper().logText("MakeupTryonActivity", "fetchRecommendation",
                         "onResult--> Number of Recommendations:-" + recommendations.size());
-                if(recommendations.size()>0){
+                if (recommendations.size() > 0) {
                     displayRecommendations(recommendations);
                 }
+            }
+
+            @Override
+            public void onErrorCallback(String errorMessage) {
                 progressDialog.dismiss();
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -363,7 +448,7 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
         strBuilder.append("Product Key => Score");
         strBuilder.append("\n");
         strBuilder.append("\n");
-        for(int i=0; i< recommendations.size();i++) {
+        for (int i = 0; i < recommendations.size(); i++) {
             strBuilder.append(recommendations.get(i).getProductKey());
             strBuilder.append(" => ");
             strBuilder.append(recommendations.get(i).getScore());
@@ -375,6 +460,12 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
                 .setMessage(strBuilder.toString())
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        //Run all tests if receiver is registered
+                        Intent broadcast = new Intent();
+                        broadcast.setAction("START_TEST");
+                        broadcast.putExtra("test", "liveCompare");
+                        sendBroadcast(broadcast);
+                        progressDialog.dismiss();
                         dialog.dismiss();
                     }
                 })
@@ -404,36 +495,23 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
                 // write your code to process or show result
                 new LogHelper().logText("MakeupTryonActivity", "sendStat", "onResult--> " + result);
                 progressDialog.dismiss();
+
+                //Run all tests if receiver is registered
+                Intent broadcast = new Intent();
+                broadcast.setAction("START_TEST");
+                broadcast.putExtra("test", "takeScreenshot");
+                sendBroadcast(broadcast);
+
+            }
+
+            @Override
+            public void onErrorCallback(String errorMessage) {
+                progressDialog.dismiss();
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    /**
-     * sendUserID.
-     *
-     * @param view the view
-     */
-    public void sendUserID(View view) {
-        progressDialog.show();
-        /**
-         * sendUserID
-         *
-         * Send user ID To SDK
-         *@param UserID
-         * @param OnSendID override One callback methods
-         *        1. onResult callbacks string result
-         */
-        new LogHelper().logText("MakeupTryonActivity", "sendUserID", "StartMethodCall");
-        designhubzVar.sendUserID("0001", new OnSendID() {
-            @Override
-            public void onResult(String result) {
-                // write your code to process or show result
-//                ((LinearLayout)findViewById(R.id.lyOtherOptions)).setVisibility(View.VISIBLE);
-                new LogHelper().logText("MakeupTryonActivity", "sendUserID", "onResult--> " + result);
-                progressDialog.dismiss();
-            }
-        });
-    }
 
     /**
      * live compare.
@@ -448,6 +526,11 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
          */
         new LogHelper().logText("MakeupTryonActivity", "liveCompare", "StartMethodCall");
         designhubzVar.liveCompare(0.5);
+        try {
+            unregisterReceiver(mReceiverStartTest);
+        } catch(IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -473,6 +556,12 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
                 new LogHelper().logText("MakeupTryonActivity", "disposeWidget", "onResult--> " + result);
                 progressDialog.dismiss();
             }
+
+            @Override
+            public void onErrorCallback(String errorMessage) {
+                progressDialog.dismiss();
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+            }
         });
     }
 
@@ -489,6 +578,11 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
     @Override
     protected void onDestroy() {
         designhubzVar.destroy();
+        try {
+            unregisterReceiver(mReceiverStartTest);
+        } catch(IllegalArgumentException e) {
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 
@@ -505,5 +599,17 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
     @Override
     public void onPageError(int i, String s, String s1) {
 
+    }
+
+    /**
+     * TestAll.
+     *
+     * @param view the view
+     */
+    public void TestAll(View view) {
+        llLabel.setVisibility(View.VISIBLE);
+        registerReceiver(mReceiverStartTest, mIntentFilterStartTest);
+        tvTestLabel.setText("Running startMakeupTryon");
+        StartMakeup(view);
     }
 }
