@@ -34,12 +34,14 @@ Designhubz Android Example is written in Java for interact with the 3D/AR widget
 
 ### 3.0
 
-- Removed the deprecated loadVariations method.
-- Removed the processing of variations returned in onResult callback of startEyearTryon and startMakeupTryon..
-- Removed the deprecated sendUserId.
-- Changed the first parameter of startEyewearTryon/startMakeupTryon method to send userId instead of productId
-- Added call to loadProduct method to load eyewear and makeup products
-- Added onErrorCallback for all methods.
+- The entry methods `startEyewearTryon(...)` and `startMakeupTryon(...)` now take an `userId` instead of `productId`
+- Added call to `loadProduct` method to load eyewear and makeup products
+- Added `onErrorCallback` for all methods.
+- Removed the deprecated `loadVariation` method.
+- Removed the deprecated `sendUserId`.
+- Transparent changes reflecting improvements to infrastructure.
+
+Check [Usage](#usage) below for an updated reference of any change.
 
 ## Installation
 
