@@ -1,8 +1,11 @@
 package com.designhubzandroidexample;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +36,7 @@ import com.designhubz.androidsdk.helper.Variation;
 import com.designhubz.androidsdk.interfaces.OnDispose;
 import com.designhubz.androidsdk.interfaces.OnEyewearFetchFitInfo;
 import com.designhubz.androidsdk.interfaces.OnEyewearSwitchCallback;
+import com.designhubz.androidsdk.interfaces.OnLoadProductCallback;
 import com.designhubz.androidsdk.interfaces.OnRecommendation;
 import com.designhubz.androidsdk.interfaces.OnScreenshotCallback;
 import com.designhubz.androidsdk.interfaces.OnSendID;
@@ -60,12 +64,13 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
     private ProgressDialog progressDialog;
     private Product mProduct = new Product("MP000000006870126", "Fastrack",
             "Fastrack P254678D Green Anti-Reflactive Sunglasses", 2300, 3000);
-    private List<Variation> exampleVariations;
-    private static int variationNumber = 0;
     private static long startTime = 0;
     private static boolean switchContextClicked = false;
     private Context context;
-    private TextView tvAvailableRAM;
+    private TextView tvAvailableRAM, tvTestLabel;
+    private BroadcastReceiver mReceiverStartTest;
+    private IntentFilter mIntentFilterStartTest;
+    private LinearLayout llLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,20 +96,61 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
         progressDialog.setCancelable(false);
 
         tvAvailableRAM = findViewById(R.id.tvAvailableRAM);
+        tvTestLabel = findViewById(R.id.tvTestLabel);
+
+        llLabel = findViewById(R.id.llLabel);
 
         //Debug available Memory
-        if(new PreferencesManager(context).getEnableDebug()) {
+        if (new PreferencesManager(context).getEnableDebug()) {
             tvAvailableRAM.setVisibility(View.VISIBLE);
             final Handler handler = new Handler();
             final int delay = 1000; // 1000 milliseconds == 1 second
 
             handler.postDelayed(new Runnable() {
                 public void run() {
-                    tvAvailableRAM.setText("Available RAM: "+ Memory.getAvailableRAM(context)+" MB");
+                    tvAvailableRAM.setText("Available RAM: " + Memory.getAvailableRAM(context) + " MB");
                     handler.postDelayed(this, delay);
                 }
             }, delay);
         }
+
+        //BroadcastReceiver to start test
+        mReceiverStartTest = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String test = intent.getStringExtra("test");
+                Log.e("StartReceiver", "START_METHOD: "+test);
+
+                switch (test) {
+                    case "loadProduct":
+                        tvTestLabel.setText("Running loadProduct");
+                        LoadProduct(null);
+                        break;
+                    case "switchContext":
+                        tvTestLabel.setText("Running switchContext");
+                        switchContext(null);
+                        break;
+                    case "fetchFit":
+                        tvTestLabel.setText("Running fetchFit");
+                        fetchFit(null);
+                        break;
+                    case "fetchRecommendations":
+                        tvTestLabel.setText("Running fetchRecommendations");
+                        fetchRecommendation(null);
+                        break;
+                    case "sendStat":
+                        tvTestLabel.setText("Running sendStat");
+                        sendStat(null);
+                        break;
+                    case "takeScreenshot":
+                        tvTestLabel.setText("Running takeScreenshot");
+                        screenshot(null);
+                        break;
+                }
+            }
+        };
+
+        mIntentFilterStartTest = new IntentFilter("START_TEST");
 
     }
 
@@ -144,6 +190,11 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
     @Override
     protected void onDestroy() {
         designhubzVar.destroy();
+        try {
+            unregisterReceiver(mReceiverStartTest);
+        } catch(IllegalArgumentException e) {
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 
@@ -194,28 +245,22 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
          *
          * @param eyewearID the eyewear id
          * @param onStartEyewearRequestCallback override three callback methods
-         *        1. onResult callbacks eyewear variation list
+         *        1. onResult callbacks completion
          *        2. onProgressCallback callbacks progress update
-         *        3. onTrackingCallback callbacks the status of eyewear tracking like Analyzing,Tracking,FaceNotFound,etc.
          */
         new LogHelper().logText("EyewearTryonActivity", "startEyewearTryon", "StartMethodCall");
-        designhubzVar.startEyewearTryon(mProduct.getId(), new OnStartEyewearRequestCallback() {
+        designhubzVar.startEyewearTryon("user12345", new OnStartEyewearRequestCallback() {
 
             @Override
-            public void onResult(List<Variation> variations) {
-                // write your code to process or show variations
-                //Storing the retrieved list of variations
-                exampleVariations = variations;
-                new LogHelper().logText("EyewearTryonActivity", "startEyewearTryon", "onResult--> Variations:-" + variations.size());
+            public void onResult() {
                 progressDialog.dismiss();
                 DebugMessage.print(context, "Load Time Eyewear 3D: " + ((new Date().getTime() - startTime) / 1000f) + " s");
-                //Send UserID to SDK
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        sendUserID(null);
-                    }
-                });
+
+                //Run all tests if receiver is registered
+                Intent broadcast = new Intent();
+                broadcast.setAction("START_TEST");
+                broadcast.putExtra("test", "loadProduct");
+                sendBroadcast(broadcast);
 
             }
 
@@ -227,60 +272,77 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
 
             @Override
             public void onTrackingCallback(TrackingStatus trackingStatus) {
-                // write your code to process or show tracking status
                 new LogHelper().logText("EyewearTryonActivity", "startEyewearTryon", "onTrackingCallback-->:-" + trackingStatus.getValue());
                 progressDialog.dismiss();
-                if (switchContextClicked && trackingStatus.getValue().equalsIgnoreCase("Tracking")) {
-                    switchContextClicked = false;
-                    DebugMessage.print(context, "Load Time Eyewear TryOn: " + ((new Date().getTime() - startTime) / 1000f) + " s ");
-                }
-                DebugMessage.print(context, "" + trackingStatus.getValue());
+                Toast.makeText(context, trackingStatus.getValue(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onErrorCallback(String errorMessage) {
+                new LogHelper().logText("EyewearTryonActivity", "startEyewearTryon", "onErrorCallback-->:-" + errorMessage);
+                progressDialog.dismiss();
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
             }
         });
     }
 
+
     /**
-     * Load variation.
+     * Load Product.
      *
      * @param view the view
      */
-    public void LoadVariation(View view) {
+    public void LoadProduct(View view) {
+        startTime = new Date().getTime();
         progressDialog.show();
         /**
-         * loadVariation
+         * loadProduct
          *
-         * Load eyewear widget variation of passed eyewear variation id
+         * Load product with productId
          *
-         * @param eyewearID the eyewear id
-         * @param OnEyewearVariationCallback override two callback methods
-         *        1. onResult callbacks eyewear variation list
+         * @param productId the eyewear id
+         * @param OnLoadProductCallback override three callback methods
+         *        1. onResult callbacks completion
          *        2. onProgressCallback callbacks progress update
+         *        3. onErrorCallback callbacks error
          */
-        new LogHelper().logText("EyewearTryonActivity", "LoadVariation", "StartMethodCall");
+        new LogHelper().logText("EyewearTryonActivity", "loadProduct", "StartMethodCall");
+        designhubzVar.loadProduct(mProduct.getId(), new OnLoadProductCallback() {
 
-        //Getting variation id from the variations retrieved from StartMakeup one by one
-        String variationId = "";
-        if (variationNumber < exampleVariations.size()) {
-            variationNumber = variationNumber < exampleVariations.size() - 1 ? variationNumber + 1 : 0;
-        } else {
-            variationNumber = 0;
-        }
-        variationId = exampleVariations.get(variationNumber).getProductKey();
-
-        designhubzVar.loadVariation(variationId, new OnVariationCallback() {
             @Override
-            public void onResult(List<Variation> variations) {
+            public void onResult() {
                 // write your code to process or show variations
+                //Storing the retrieved list of variations
                 progressDialog.dismiss();
+                DebugMessage.print(context, "Load Time: " + ((new Date().getTime() - startTime) / 1000f) + " s");
+
+                //Run all tests if receiver is registered
+                Intent broadcast = new Intent();
+                broadcast.setAction("START_TEST");
+                broadcast.putExtra("test", "switchContext");
+                sendBroadcast(broadcast);
+
             }
 
             @Override
             public void onProgressCallback(Progress progress) {
                 // write your code to process or show progress
-                new LogHelper().logText("EyewearTryonActivity", "LoadVariation", "onProgressCallback-->:-" + progress.data);
+                new LogHelper().logText("EyewearTryonActivity", "loadProduct", "onProgressCallback-->:-" + progress.data);
+            }
+
+            @Override
+            public void onErrorCallback(String errorMessage) {
+                progressDialog.dismiss();
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+                //Run all tests if receiver is registered
+                Intent broadcast = new Intent();
+                broadcast.setAction("START_TEST");
+                broadcast.putExtra("test", "switchContext");
+                sendBroadcast(broadcast);
             }
         });
     }
+
 
     /**
      * Switch context.
@@ -302,17 +364,29 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
          */
         new LogHelper().logText("EyewearTryonActivity", "switchContext", "StartMethodCall");
         designhubzVar.switchContext(new OnEyewearSwitchCallback() {
+
             @Override
-            public void onResult(String result) {
-                // write your code to process or show result
-                new LogHelper().logText("EyewearTryonActivity", "switchContext", "onResult--> " + result);
+            public void onResult(String data) {
+                new LogHelper().logText("EyewearTryonActivity", "switchContext", "switchContext-->:-" + data);
                 progressDialog.dismiss();
+
+                //Run all tests if receiver is registered
+                Intent broadcast = new Intent();
+                broadcast.setAction("START_TEST");
+                broadcast.putExtra("test", "fetchFit");
+                sendBroadcast(broadcast);
             }
 
             @Override
             public void onProgressCallback(Progress progress) {
                 // write your code to process or show progress
                 new LogHelper().logText("EyewearTryonActivity", "switchContext", "onProgressCallback-->:-" + progress.data);
+            }
+
+            @Override
+            public void onErrorCallback(String errorMessage) {
+                progressDialog.dismiss();
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -341,6 +415,12 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
                 new LogHelper().logText("EyewearTryonActivity", "screenshot", "onResult--> Bitmap");
                 showImageInDialog(bitmap);
             }
+
+            @Override
+            public void onErrorCallback(String errorMessage) {
+                progressDialog.dismiss();
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+            }
         });
     }
 
@@ -351,6 +431,17 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        llLabel.setVisibility(View.GONE);
+                        try {
+                            unregisterReceiver(mReceiverStartTest);
+                        } catch(IllegalArgumentException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
         final AlertDialog dialog = builder.create();
@@ -392,6 +483,18 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
                 new LogHelper().logText("EyewearTryonActivity", "fetchFit", "onResult--> Fit:-" + fit.getValue() + "  Size:-" + size.getValue());
                 Toast.makeText(EyewearTryonActivity.this, "FIT:-" + fit.getValue() + " SIZE:-" + size.getValue(), Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
+
+                //Run all tests if receiver is registered
+                Intent broadcast = new Intent();
+                broadcast.setAction("START_TEST");
+                broadcast.putExtra("test", "fetchRecommendations");
+                sendBroadcast(broadcast);
+            }
+
+            @Override
+            public void onErrorCallback(String errorMessage) {
+                progressDialog.dismiss();
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -419,10 +522,16 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
                 // write your code to process or show recommendations
                 new LogHelper().logText("EyewearTryonActivity", "fetchRecommendation",
                         "onResult--> Number of Recommendations:-" + recommendations.size());
-                if(recommendations.size()>0){
+                if (recommendations.size() > 0) {
                     displayRecommendations(recommendations);
                 }
                 progressDialog.dismiss();
+            }
+
+            @Override
+            public void onErrorCallback(String errorMessage) {
+                progressDialog.dismiss();
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -437,7 +546,7 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
         strBuilder.append("Product Key => Score");
         strBuilder.append("\n");
         strBuilder.append("\n");
-        for(int i=0; i< recommendations.size();i++) {
+        for (int i = 0; i < recommendations.size(); i++) {
             strBuilder.append(recommendations.get(i).getProductKey());
             strBuilder.append(" => ");
             strBuilder.append(recommendations.get(i).getScore());
@@ -450,6 +559,11 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        //Run all tests if receiver is registered
+                        Intent broadcast = new Intent();
+                        broadcast.setAction("START_TEST");
+                        broadcast.putExtra("test", "sendStat");
+                        sendBroadcast(broadcast);
                     }
                 })
                 .show();
@@ -478,33 +592,18 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
                 // write your code to process or show result
                 new LogHelper().logText("EyewearTryonActivity", "sendStat", "onResult--> " + result);
                 progressDialog.dismiss();
-            }
-        });
-    }
 
-    /**
-     * sendUserID.
-     *
-     * @param view the view
-     */
-    public void sendUserID(View view) {
-        progressDialog.show();
-        /**
-         * sendUserID
-         *
-         * Send user ID To SDK
-         *@param UserID
-         * @param OnSendID override One callback methods
-         *        1. onResult callbacks string result
-         */
-        new LogHelper().logText("EyewearTryonActivity", "sendUserID", "StartMethodCall");
-        designhubzVar.sendUserID("0001", new OnSendID() {
+                //Run all tests if receiver is registered
+                Intent broadcast = new Intent();
+                broadcast.setAction("START_TEST");
+                broadcast.putExtra("test", "takeScreenshot");
+                sendBroadcast(broadcast);
+            }
+
             @Override
-            public void onResult(String result) {
-                // write your code to process or show result
-//                ((LinearLayout)findViewById(R.id.lyOtherOptions)).setVisibility(View.VISIBLE);
-                new LogHelper().logText("EyewearTryonActivity", "sendUserID", "onResult--> " + result);
+            public void onErrorCallback(String errorMessage) {
                 progressDialog.dismiss();
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -532,6 +631,24 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
                 new LogHelper().logText("EyewearTryonActivity", "disposeWidget", "onResult--> " + result);
                 progressDialog.dismiss();
             }
+
+            @Override
+            public void onErrorCallback(String errorMessage) {
+                progressDialog.dismiss();
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+            }
         });
+    }
+
+    /**
+     * TestAll.
+     *
+     * @param view the view
+     */
+    public void TestAll(View view) {
+        llLabel.setVisibility(View.VISIBLE);
+        registerReceiver(mReceiverStartTest, mIntentFilterStartTest);
+        tvTestLabel.setText("Running startEyewearTryon");
+        StartEyewear(view);
     }
 }
