@@ -25,6 +25,19 @@ Designhubz Android Example is written in Java for interact with the 3D/AR widget
 - Seamlessly switch between variations in real-time
 - Get access to recommendations
 - Check information about product fit (if applicable. Example: Eyewear is too large)
+- Take before/after screenshots
+- Live compare with/without make up look
+
+## Changelog
+
+### 1.7
+
+- Removed the deprecated loadVariations method.
+- Removed the processing of variations returned in onResult callback of startEyearTryon and startMakeupTryon..
+- Removed the deprecated sendUserId.
+- Changed the first parameter of startEyewearTryon/startMakeupTryon method to send userId instead of productId
+- Added call to loadProduct method to load eyewear and makeup products
+- Added onErrorCallback for all methods.
 
 ## Installation
 
@@ -48,7 +61,7 @@ dependencies{
      * Step 2 : Add this android-sdk dependency
      */
 
-    implementation 'com.github.designhubz-org:android-sdk:2.4'
+    implementation 'com.github.designhubz-org:android-sdk:3.0'
 
 }
 ```
@@ -110,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
     }
 
     /**
-     * Request permission listner for watch is permission allow by user or not.
+     * Request permission listener for watch is permission allow by user or not.
      *
      * @param requestCode
      * @param permissions
@@ -148,43 +161,57 @@ public class MainActivity extends AppCompatActivity implements WebviewListener{
 DesignhubzWebview.initializeComponents(this);
 ```
 
-
-
-- To start the eyewear try-on widget:
+- Starting Eyewear Try-On:
 
 ```java
-progressDialog.show();
+designhubzVar.startEyewearTryon("<userId>", new OnStartEyewearRequestCallback() {
 
-/**
- * startEyewearTryon
- *
- * Load eyewear widget of given eyewear id
- *
- * @param userId the user id
- * @param onStartEyewearRequestCallback override three callback methods
- *        1. onResult callbacks completion
- *        2. onProgressCallback callbacks progress update
- *        3. onTrackingCallback callbacks the status of eyewear tracking like Analyzing,Tracking,FaceNotFound,etc.
- */
+@Override
+public void onResult() {
+        // write your code to display result
+        }
 
-designhubzVar.startEyewearTryon("<userId>",new OnStartEyewearRequestCallback() {
-      @Override
-      public void onResult() {
-          // write your code to show result
-          progressDialog.dismiss();
-      }
+@Override
+public void onProgressCallback(Progress progress) {
+        // write your code to process or show progress. Value will be between 0 to 1
+        }
 
-      @Override
-      public void onProgressCallback(Progress progress) {
-          // write your code to process or show progress
-      }
+@Override
+public void onTrackingCallback(TrackingStatus trackingStatus) {
+        // write your code to use tracking status
+        }
 
-      @Override
-      public void onTrackingCallback(TrackingStatus trackingStatus) {
-          // write your code to process or show tracking status
-          progressDialog.dismiss();
-          Toast.makeText(VideoViewActivity.this, ""+trackingStatus.getValue(), Toast.LENGTH_SHORT).show();
-      }
+@Override
+public void onErrorCallback(String errorMessage) {
+        // write your code to display error message
+        }
+});
+```
+
+- Starting Makeup Try-On:
+
+```java
+designhubzVar.startMakeupTryon("<userId>", new OnStartMakeupRequestCallback() {
+
+@Override
+public void onResult() {
+        // write code to display result
+        }
+
+@Override
+public void onProgressCallback(Progress progress) {
+        // write code to process or show progress. Value will be between 0 to 1
+        }
+
+@Override
+public void onTrackingCallback(TrackingStatus trackingStatus) {
+        // write code to use tracking status
+        }
+
+@Override
+public void onErrorCallback(String errorMessage) {
+        // write code to display error message
+        }
 });
 ```
 
@@ -210,152 +237,122 @@ public void onErrorCallback(String errorMessage) {
 });
 ```
 
-- To switch context (toggle between 3D/Tryon):
+- To switch context from 3D to Tryon and Tryon to 3D (Only for Eyewear Try-On):
 
 ```java
-progressDialog.show();
- /**
- * switchContext
- *
- * Switch context from 3D to Tryon and Tryon to 3D
- *
- * @param OnEyewearSwitchCallback override two callback methods
- *        1. onResult callbacks string result
- *        2. onProgressCallback callbacks progress update
- */
 designhubzVar.switchContext(new OnEyewearSwitchCallback() {
-      @Override
-      public void onResult(String result) {
-          // write your code to process or show result
-          progressDialog.dismiss();
-      }
 
-      @Override
-      public void onProgressCallback(Progress progress) {
-          // write your code to process or show progress
-      }
-});
-```
-- To take a screenshot (returns bitmap image):
+@Override
+public void onProgressCallback(Progress progress) {
+        // write code to show progress
+        }
 
-```java
-progressDialog.show();
- /**
- * takeScreenshot
- *
- * Take screenshot of tryon or 3D tryon and returns Bitmap image as result
- *
- * @param OnEyewearScreenshotCallback override one callback methods
- *        1. onResult callbacks Bitmap image of tryon
- */
-designhubzVar.takeScreenshot(new OnEyewearScreenshotCallback() {
-      @Override
-      public void onResult(Bitmap bitmap) {
-                progressDialog.dismiss();
-                // write your code to process or show image
-      }
-});
-
-```
-
-- To Fetch fit information:
-
-```java
-progressDialog.show();
-/**
-* fetchFitInfo
-*
-* Fetch fit info of eyewear
-*
-* @param OnEyewearFetchFitInfo override One callback methods
-      *1. onResult callbacks receive two result i.e Eyewear Fit and Eyewear Size
-*/
-designhubzVar.fetchFitInfo(new OnEyewearFetchFitInfo() {
-        @Override
-        public void onResult(Eyewear.Fit fit, Eyewear.Size size) {
-            // write your code to process or show fit info
-            Toast.makeText(VideoViewActivity.this, "FIT:-"+fit.getValue()+" SIZE:-"+size.getValue(), Toast.LENGTH_SHORT).show();
-            progressDialog.dismiss();
+@Override
+public void onErrorCallback(String errorMessage) {
+        // write code to display error
         }
 });
-
 ```
-- To Fetch recommendations for Eyewear and Makeup(pass number of recommendations needed):
+
+- To take screenshot of tryon or 3D and get Bitmap image as result:
 
 ```java
-progressDialog.show();
-/**
-* fetchRecommendations
-*
-* Fetch eyewear and makeup Recommendations
-*
-* @param noOfRecomendation the no of recommendations want to get
-* @param OnRecommendation override One callback methods
-*        1. onResult callbacks recommendation list
-*/
-designhubzVar.fetchRecommendations(<"pass here number of recommandation">,new OnRecommendation() {
-    @Override
-    public void onResult(List<Recommendations> recommendations) {
-        // write your code to process or show recommendations
-        progressDialog.dismiss();
-    }
+designhubzVar.takeScreenshot(new OnScreenshotCallback() {
+@Override
+public void onResult(Bitmap bitmap) {
+        // write code to display/save bitmap
+        }
+
+@Override
+public void onErrorCallback(String errorMessage) {
+        // write code to display error
+        }
 });
-
 ```
-- [beta] To start live comparison for Makeup:
+
+- To fetch fit info (Only for Eyewear Try-On):
 
 ```java
-/**
-* liveCompare
-*
-* Start live compare for make-up try on
-* 
-* @param horizontalRatio Control product's horizontal augmentation area. Normalized value [0, 1] with 0 being fully visible and 1 fully hidden
-*/
-designhubzVar.liveCompare(0.5);
+designhubzVar.fetchFitInfo(new OnEyewearFetchFitInfo() {
+@Override
+public void onResult(Eyewear.Fit fit, Eyewear.Size size) {
+        // write code to process or show fit info
+        }
 
-
-```
-- To Send statistics To SDK (Stats can be: Whishlisted, AddedToCart, SnapshotSaved,SharedToSocialMedia):
-
-```java
-progressDialog.show();
-/**
-* sendStat
-*
-* Send statistics To SDK
-*
-* @param Stat Pass enum of the stats it can be Whishlisted, AddedToCart, SnapshotSaved,SharedToSocialMedia
-* @param OnEyewearSendStat override One callback methods
-*        1. onResult callbacks string result
-*/
-designhubzVar.sendStat(Stat.Whishlisted,new OnEyewearSendStat() {
-    @Override
-    public void onResult(String result) {
-        // write your code to process or show result
-        progressDialog.dismiss();
-    }
+@Override
+public void onErrorCallback(String errorMessage) {
+        // write code to display error
+        }
 });
-
 ```
-- To Send request to dispose widget To SDK:
+
+- To fetch Eyewear/Makeup Recommendations:
 
 ```java
-progressDialog.show();
-/**
-* DisposeWidget
-*
-* To dispose widget
-*
-* @param OnEyewearDispose override One callback methods
-*        1. onResult callbacks string result
-*/
-designhubzVar.disposeWidget(new OnEyewearDispose() {
-    @Override
-    public void onResult(String result) {
-        // write your code to process or show result
-        progressDialog.dismiss();
-    }
-});
+designhubzVar.fetchRecommendations(3, new OnRecommendation() {
+@Override
+public void onResult(List<Recommendations> recommendations) {
+        // write code to process or show recommendations
+        }
 
+@Override
+public void onErrorCallback(String errorMessage) {
+        // write code to display error
+        }
+});
+```
+
+- To send statistics to SDK:
+
+```java
+designhubzVar.sendStat(Stat.Whishlisted, new OnSendStat() {
+@Override
+public void onResult(String result) {
+        // write code to process or show result
+        }
+
+@Override
+public void onErrorCallback(String errorMessage) {
+        // write code to display error
+        }
+});
+```
+
+- To take before/after screenshots (Only for Makeup Try-On):
+
+```java
+designhubzVar.takeDoubleScreenshot(new OnDoubleScreenshotCallback() {
+@Override
+public void onResult(Bitmap originalSnapshot, Bitmap snapshot) {
+        // write code to display before/after images
+        }
+
+@Override
+public void onErrorCallback(String errorMessage) {
+        // write code to display error
+        }
+});
+```
+
+- To start live comparison (Only for Makeup Try-On):
+
+```java
+int horizontalRatio = 0.5; //Value between 0 to 1
+designhubzVar.liveCompare(horizontalRatio);
+```
+
+- To dispose widget:
+
+```java
+designhubzVar.disposeWidget(new OnDispose() {
+@Override
+public void onResult(String result) {
+        // write code to process or show result
+        }
+
+@Override
+public void onErrorCallback(String errorMessage) {
+        // write code to display error
+        }
+});
 ```
