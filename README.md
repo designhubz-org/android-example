@@ -30,7 +30,9 @@ Designhubz Android Example is written in Java for interact with the 3D/AR widget
 
 ## Changelog
 
-### 1.7
+### Latest: com.github.designhubz-org:android-sdk:3.0
+
+### 3.0
 
 - Removed the deprecated loadVariations method.
 - Removed the processing of variations returned in onResult callback of startEyearTryon and startMakeupTryon..
