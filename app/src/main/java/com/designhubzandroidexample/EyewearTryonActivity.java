@@ -1,5 +1,7 @@
 package com.designhubzandroidexample;
 
+import static com.designhubz.androidsdk.helper.RequestCodes.REQUEST_CODE_PERMISSION;
+
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -39,10 +41,8 @@ import com.designhubz.androidsdk.interfaces.OnEyewearSwitchCallback;
 import com.designhubz.androidsdk.interfaces.OnLoadProductCallback;
 import com.designhubz.androidsdk.interfaces.OnRecommendation;
 import com.designhubz.androidsdk.interfaces.OnScreenshotCallback;
-import com.designhubz.androidsdk.interfaces.OnSendID;
 import com.designhubz.androidsdk.interfaces.OnSendStat;
 import com.designhubz.androidsdk.interfaces.OnStartEyewearRequestCallback;
-import com.designhubz.androidsdk.interfaces.OnVariationCallback;
 import com.designhubz.androidsdk.interfaces.WebviewListener;
 import com.designhubzandroidexample.helper.DebugMessage;
 import com.designhubzandroidexample.helper.LogHelper;
@@ -51,8 +51,6 @@ import com.designhubzandroidexample.helper.PreferencesManager;
 
 import java.util.Date;
 import java.util.List;
-
-import static com.designhubz.androidsdk.helper.RequestCodes.REQUEST_CODE_PERMISSION;
 
 /**
  * The type Eyewear Tryon activity.
@@ -67,7 +65,7 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
     private static long startTime = 0;
     private static boolean switchContextClicked = false;
     private Context context;
-    private TextView tvAvailableRAM, tvTestLabel;
+    private TextView tvAvailableRAM, tvTestLabel, tvTracking;
     private BroadcastReceiver mReceiverStartTest;
     private IntentFilter mIntentFilterStartTest;
     private LinearLayout llLabel;
@@ -97,6 +95,7 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
 
         tvAvailableRAM = findViewById(R.id.tvAvailableRAM);
         tvTestLabel = findViewById(R.id.tvTestLabel);
+        tvTracking = findViewById(R.id.tvTracking);
 
         llLabel = findViewById(R.id.llLabel);
 
@@ -119,7 +118,7 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
             @Override
             public void onReceive(Context context, Intent intent) {
                 String test = intent.getStringExtra("test");
-                Log.e("StartReceiver", "START_METHOD: "+test);
+                Log.e("StartReceiver", "START_METHOD: " + test);
 
                 switch (test) {
                     case "loadProduct":
@@ -192,7 +191,7 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
         designhubzVar.destroy();
         try {
             unregisterReceiver(mReceiverStartTest);
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
         super.onDestroy();
@@ -274,7 +273,15 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
             public void onTrackingCallback(TrackingStatus trackingStatus) {
                 new LogHelper().logText("EyewearTryonActivity", "startEyewearTryon", "onTrackingCallback-->:-" + trackingStatus.getValue());
                 progressDialog.dismiss();
-                Toast.makeText(context, trackingStatus.getValue(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, trackingStatus.getValue(), Toast.LENGTH_SHORT).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvTracking.setVisibility(View.VISIBLE);
+                        tvTracking.setText("Tracking Status: " + trackingStatus.getValue());
+                    }
+                });
+
             }
 
             @Override
@@ -310,11 +317,14 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
         designhubzVar.loadProduct(mProduct.getId(), new OnLoadProductCallback() {
 
             @Override
-            public void onResult() {
+            public void onResult(List<Variation> variations) {
                 // write your code to process or show variations
                 //Storing the retrieved list of variations
                 progressDialog.dismiss();
                 DebugMessage.print(context, "Load Time: " + ((new Date().getTime() - startTime) / 1000f) + " s");
+
+                Toast.makeText(context, variations.size() + " variations loaded each with "
+                        + variations.get(0).getProperties().size() + " properties", Toast.LENGTH_LONG).show();
 
                 //Run all tests if receiver is registered
                 Intent broadcast = new Intent();
@@ -437,7 +447,7 @@ public class EyewearTryonActivity extends AppCompatActivity implements WebviewLi
                         llLabel.setVisibility(View.GONE);
                         try {
                             unregisterReceiver(mReceiverStartTest);
-                        } catch(IllegalArgumentException e) {
+                        } catch (IllegalArgumentException e) {
                             e.printStackTrace();
                         }
                     }
