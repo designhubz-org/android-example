@@ -30,7 +30,11 @@ Designhubz Android Example is written in Java for interact with the 3D/AR widget
 
 ## Changelog
 
-### Latest: com.github.designhubz-org:android-sdk:3.0
+### Latest: com.github.designhubz-org:android-sdk:3.0.1
+
+### 3.0.1
+
+- Changed method signature of onResult() inside loadProduct callback. It will now have one parameter, list of variations.
 
 ### 3.0
 
@@ -65,7 +69,7 @@ dependencies{
      * Step 2 : Add this android-sdk dependency
      */
 
-    implementation 'com.github.designhubz-org:android-sdk:3.0'
+    implementation 'com.github.designhubz-org:android-sdk:3.0.1'
 
 }
 ```
@@ -225,8 +229,9 @@ public void onErrorCallback(String errorMessage) {
 designhubzVar.loadProduct("<ProductId>", new OnLoadProductCallback() {
 
 @Override
-public void onResult() {
-        // write code to display result
+public void onResult(List<Variation> variations) {
+        // write code to process list of variations
+        // Example: variations.get(<index>).getProperties().get("Color Code")
         }
 
 @Override

@@ -60,7 +60,7 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
     private final String exampleMakeupId = "MP000000008737118";
     private static long startTime = 0;
     private Context context;
-    private TextView tvAvailableRAM, tvTestLabel;
+    private TextView tvAvailableRAM, tvTestLabel, tvTracking;
     private BroadcastReceiver mReceiverStartTest;
     private IntentFilter mIntentFilterStartTest;
     private LinearLayout llLabel;
@@ -89,6 +89,7 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
 
         tvAvailableRAM = findViewById(R.id.tvAvailableRAM);
         tvTestLabel = findViewById(R.id.tvTestLabel);
+        tvTracking = findViewById(R.id.tvTracking);
 
         llLabel = findViewById(R.id.llLabel);
 
@@ -214,7 +215,14 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
                 // write your code to process or show tracking status
                 new LogHelper().logText("MakeupTryonActivity", "startMakeupTryon", "onTrackingCallback-->:-" + trackingStatus.getValue());
                 progressDialog.dismiss();
-                Toast.makeText(MakeupTryonActivity.this, "" + trackingStatus.getValue(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MakeupTryonActivity.this, "" + trackingStatus.getValue(), Toast.LENGTH_SHORT).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvTracking.setVisibility(View.VISIBLE);
+                        tvTracking.setText("Tracking Status: " + trackingStatus.getValue());
+                    }
+                });
             }
 
             @Override
@@ -249,11 +257,14 @@ public class MakeupTryonActivity extends AppCompatActivity implements WebviewLis
         designhubzVar.loadProduct(exampleMakeupId, new OnLoadProductCallback() {
 
             @Override
-            public void onResult() {
+            public void onResult(List<Variation> variations) {
                 // write your code to process or show variations
                 //Storing the retrieved list of variations
                 progressDialog.dismiss();
                 DebugMessage.print(context, "Load Time: " + ((new Date().getTime() - startTime) / 1000f) + " s");
+
+                Toast.makeText(context,  variations.size() +" variations loaded each with "
+                        + variations.get(0).getProperties().size()+ " properties", Toast.LENGTH_LONG).show();
 
                 //Run all tests if receiver is registered
                 Intent broadcast = new Intent();
