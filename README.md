@@ -32,6 +32,14 @@ Designhubz Android Example is written in Java for interact with the 3D/AR widget
 
 ### Latest: com.github.designhubz-org:android-sdk:3.0.1
 
+### 3.0.1 hotfix
+*(backward compatible with no required upgrades)*
+
+- `onErrorCallback(String errorMessage)` of `startMakeupTryon` will throw:
+    - `errorMessage = "0"` for lack of webgl support or outdated opengl drivers.
+    - `errorMessage = "1"` when not enough available RAM (~600MB).
+    - Otherwise unchanged: The error callback `errorMessage = "any other error"` should still be handled.
+
 ### 3.0.1
 
 - Changed method signature of onResult() inside loadProduct callback. It will now have one parameter, list of variations.
