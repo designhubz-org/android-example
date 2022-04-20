@@ -30,7 +30,12 @@ Designhubz Android Example is written in Java for interact with the 3D/AR widget
 
 ## Changelog
 
-### Latest: com.github.designhubz-org:android-sdk:3.0.1
+### Latest: com.github.designhubz-org:android-sdk:3.0.2
+
+### 3.0.2
+
+- Improves logging and debugging
+- Requesting Garbage Collection before widgets are loaded.
 
 ### 3.0.1 hotfix
 *(backward compatible with no required upgrades)*
